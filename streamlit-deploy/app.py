@@ -148,14 +148,34 @@ st.markdown("""
         color: var(--primary) !important;
     }
     
-    /* Success messages */
-    .stSuccess {
-        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%) !important;
-        color: white !important;
+    /* Success messages - multiple selectors to ensure coverage */
+    .stSuccess, .stAlert[kind="success"], [data-testid="stAlert"][kind="success"] {
+        background: linear-gradient(135deg, #bbf7d0 0%, #86efac 100%) !important;
+        color: #065f46 !important;
         border-radius: 12px !important;
         padding: 1rem !important;
-        border: none !important;
+        border: 2px solid #22c55e !important;
         box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3) !important;
+        font-weight: 600 !important;
+    }
+    
+    .stSuccess *, .stAlert[kind="success"] *, [data-testid="stAlert"][kind="success"] * {
+        color: #065f46 !important;
+    }
+    
+    /* Error messages - multiple selectors to ensure coverage */
+    .stError, .stAlert[kind="error"], [data-testid="stAlert"][kind="error"] {
+        background: linear-gradient(135deg, #fecaca 0%, #fca5a5 100%) !important;
+        color: #7f1d1d !important;
+        border-radius: 12px !important;
+        padding: 1rem !important;
+        border: 2px solid #ef4444 !important;
+        box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3) !important;
+        font-weight: 600 !important;
+    }
+    
+    .stError *, .stAlert[kind="error"] *, [data-testid="stAlert"][kind="error"] * {
+        color: #7f1d1d !important;
     }
     
     /* Error messages */
@@ -249,6 +269,58 @@ st.markdown("""
     .stTextInput input:-ms-input-placeholder, .stTextArea textarea:-ms-input-placeholder {
         color: #6b7280 !important;
         opacity: 1 !important;
+    }
+    
+    /* Fix tab visibility - make all tab text permanently visible */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px !important;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        color: #000000 !important;
+        background-color: rgba(255, 255, 255, 0.8) !important;
+        border-radius: 8px !important;
+        padding: 8px 16px !important;
+        font-weight: 600 !important;
+        border: 2px solid #e5e7eb !important;
+    }
+    
+    .stTabs [data-baseweb="tab"]:hover {
+        color: #000000 !important;
+        background-color: #f3f4f6 !important;
+        border-color: #9ca3af !important;
+    }
+    
+    .stTabs [aria-selected="true"] {
+        color: #000000 !important;
+        background-color: #ffffff !important;
+        border-color: #3b82f6 !important;
+        box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1) !important;
+    }
+    
+    /* Personality Test Slider Styling */
+    .stSlider {
+        padding: 10px 0 !important;
+    }
+    
+    .stSlider > div > div > div > div {
+        text-align: center !important;
+    }
+    
+    /* Make slider track thicker and more visible */
+    .stSlider > div > div > div > div > div {
+        height: 8px !important;
+        background: linear-gradient(90deg, #ef4444 0%, #f59e0b 50%, #22c55e 100%) !important;
+        border-radius: 4px !important;
+    }
+    
+    /* Make slider thumb bigger */
+    .stSlider > div > div > div > div > div > div {
+        width: 24px !important;
+        height: 24px !important;
+        background: #3b82f6 !important;
+        border: 3px solid #ffffff !important;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3) !important;
     }
 
     /* FORCE ALL BUTTONS TO BE VISIBLE AND CLICKABLE */
@@ -741,7 +813,7 @@ def show_dashboard_content():
 def show_personality_test():
     """Show personality test interface"""
     render_heading("Personality Test", "🧠")
-    st.markdown("Rate each aspect of your personality on a scale from 0 to 10")
+    st.markdown("<div style='text-align: center; font-size: 18px; margin-bottom: 30px;'>Rate each aspect of your personality on a scale from 0 to 10</div>", unsafe_allow_html=True)
     
     # Load models and features
     model, le = load_models()
@@ -766,11 +838,16 @@ def show_personality_test():
             feature_display = feature.replace('_', ' ').title()
             description = FEATURE_DESCRIPTIONS.get(feature, f"Rate your {feature.replace('_', ' ')}")
 
-            # Center each question and slider
+            # Center each question and slider with larger text
             with st.container():
                 c1, c2, c3 = st.columns([1, 8, 1])
                 with c2:
-                    st.markdown(f"**{feature_display}**", unsafe_allow_html=True)
+                    # Larger, centered question title
+                    st.markdown(f"<div style='text-align: center; font-size: 22px; font-weight: bold; color: #1f2937; margin-bottom: 10px;'>{feature_display}</div>", unsafe_allow_html=True)
+                    
+                    # Centered description with larger text
+                    st.markdown(f"<div style='text-align: center; font-size: 16px; color: #4b5563; margin-bottom: 15px; font-style: italic;'>{description}</div>", unsafe_allow_html=True)
+                    
                     responses[feature] = st.slider(
                         label=f"slider_{feature}",
                         min_value=0.0,
@@ -781,8 +858,9 @@ def show_personality_test():
                         key=f"slider_{feature}",
                         label_visibility='collapsed'
                     )
-                    st.caption(description)
-                    st.markdown("---")
+                    
+                    # Add some spacing
+                    st.markdown("<div style='margin-bottom: 30px;'></div>", unsafe_allow_html=True)
         
         # Submit button
         submit_btn = st.form_submit_button("🎯 Get My Personality Result", use_container_width=True)
