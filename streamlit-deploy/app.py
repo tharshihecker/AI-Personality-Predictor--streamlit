@@ -28,7 +28,7 @@ st.markdown("""
     
     /* Main app styling */
     .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
         font-family: 'Inter', sans-serif;
     }
     
@@ -46,10 +46,10 @@ st.markdown("""
     
     /* Titles and headers */
     .stTitle {
-        color: #ffffff !important;
+        color: #1a202c !important;
         text-align: center;
         font-weight: 700;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
     
     h1, h2, h3 {
@@ -109,28 +109,28 @@ st.markdown("""
     
     /* Buttons with modern design */
     .stButton > button {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
         color: white !important;
         border: none !important;
         border-radius: 12px !important;
         padding: 12px 24px !important;
         font-weight: 600 !important;
         font-size: 16px !important;
-        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
+        box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3) !important;
         transition: all 0.3s ease !important;
         text-transform: none !important;
     }
     
     .stButton > button:hover {
         transform: translateY(-2px) !important;
-        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6) !important;
+        box-shadow: 0 6px 20px rgba(66, 153, 225, 0.4) !important;
     }
     
     /* Secondary buttons */
     .stButton > button[kind="secondary"] {
         background: rgba(255, 255, 255, 0.9) !important;
-        color: #667eea !important;
-        border: 2px solid #667eea !important;
+        color: #4299e1 !important;
+        border: 2px solid #4299e1 !important;
     }
     
     /* Success messages */
@@ -165,14 +165,14 @@ st.markdown("""
     
     /* Sliders with better styling */
     .stSlider > div > div > div {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
         border-radius: 8px !important;
     }
     
     .stSlider > div > div > div > div {
         background: white !important;
-        border: 3px solid #667eea !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+        border: 3px solid #4299e1 !important;
+        box-shadow: 0 2px 8px rgba(66, 153, 225, 0.3) !important;
     }
     
     /* Metrics styling */
@@ -189,29 +189,29 @@ st.markdown("""
     
     /* Personality cards with glass effect */
     .personality-card {
-        background: rgba(255, 255, 255, 0.95) !important;
+        background: rgba(255, 255, 255, 0.98) !important;
         backdrop-filter: blur(10px) !important;
         padding: 2rem !important;
         border-radius: 20px !important;
         margin: 1rem 0 !important;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.1) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.08) !important;
+        border: 1px solid rgba(255, 255, 255, 0.3) !important;
         text-align: center !important;
     }
     
     .introvert-card {
         border-left: 6px solid #4299e1 !important;
-        background: linear-gradient(135deg, rgba(66, 153, 225, 0.1) 0%, rgba(49, 130, 206, 0.1) 100%) !important;
+        background: linear-gradient(135deg, rgba(66, 153, 225, 0.08) 0%, rgba(49, 130, 206, 0.08) 100%) !important;
     }
     
     .extrovert-card {
         border-left: 6px solid #ed8936 !important;
-        background: linear-gradient(135deg, rgba(237, 137, 54, 0.1) 0%, rgba(221, 107, 32, 0.1) 100%) !important;
+        background: linear-gradient(135deg, rgba(237, 137, 54, 0.08) 0%, rgba(221, 107, 32, 0.08) 100%) !important;
     }
     
     .ambivert-card {
         border-left: 6px solid #9f7aea !important;
-        background: linear-gradient(135deg, rgba(159, 122, 234, 0.1) 0%, rgba(128, 90, 213, 0.1) 100%) !important;
+        background: linear-gradient(135deg, rgba(159, 122, 234, 0.08) 0%, rgba(128, 90, 213, 0.08) 100%) !important;
     }
     
     /* Tabs styling */
@@ -223,8 +223,8 @@ st.markdown("""
     
     .stTabs > div > div > div > div[aria-selected="true"] {
         background: rgba(255, 255, 255, 0.95) !important;
-        border-bottom-color: #667eea !important;
-        color: #667eea !important;
+        border-bottom-color: #4299e1 !important;
+        color: #4299e1 !important;
         font-weight: 600 !important;
     }
     
@@ -267,7 +267,7 @@ st.markdown("""
     
     /* Progress bar */
     .stProgress > div > div > div > div {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
     }
     
     /* Checkbox styling */
@@ -723,12 +723,32 @@ def show_test_results(prediction, confidence, probabilities):
             values='Probability', 
             names='Personality',
             color_discrete_map={
-                'Extrovert': '#f97316',
-                'Introvert': '#3b82f6', 
-                'Ambivert': '#8b5cf6'
-            }
+                'Extrovert': '#ed8936',
+                'Introvert': '#4299e1', 
+                'Ambivert': '#9f7aea'
+            },
+            title="Personality Type Probabilities"
         )
-        fig.update_traces(textposition='inside', textinfo='percent+label')
+        fig.update_traces(
+            textposition='inside', 
+            textinfo='percent+label',
+            textfont=dict(size=14, color='white'),
+            marker=dict(line=dict(color='white', width=2))
+        )
+        fig.update_layout(
+            font=dict(size=14, color='#2d3748'),
+            title_font=dict(size=18, color='#1a202c'),
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            showlegend=True,
+            legend=dict(
+                orientation="v",
+                yanchor="middle",
+                y=0.5,
+                xanchor="left",
+                x=1.01
+            )
+        )
         st.plotly_chart(fig, use_container_width=True)
     
     # Detailed sections
@@ -859,15 +879,31 @@ def show_profile():
                         y=list(personality_counts.values()),
                         color=list(personality_counts.keys()),
                         color_discrete_map={
-                            'Extrovert': '#f97316',
-                            'Introvert': '#3b82f6',
-                            'Ambivert': '#8b5cf6'
-                        }
+                            'Extrovert': '#ed8936',
+                            'Introvert': '#4299e1',
+                            'Ambivert': '#9f7aea'
+                        },
+                        title="Personality Type Distribution"
                     )
                     fig.update_layout(
                         xaxis_title="Personality Type",
                         yaxis_title="Number of Tests",
-                        showlegend=False
+                        showlegend=False,
+                        font=dict(size=14, color='#2d3748'),
+                        title_font=dict(size=18, color='#1a202c'),
+                        paper_bgcolor='rgba(0,0,0,0)',
+                        plot_bgcolor='rgba(0,0,0,0)',
+                        xaxis=dict(
+                            gridcolor='rgba(128,128,128,0.2)',
+                            linecolor='rgba(128,128,128,0.3)'
+                        ),
+                        yaxis=dict(
+                            gridcolor='rgba(128,128,128,0.2)',
+                            linecolor='rgba(128,128,128,0.3)'
+                        )
+                    )
+                    fig.update_traces(
+                        marker=dict(line=dict(color='white', width=1))
                     )
                     st.plotly_chart(fig, use_container_width=True)
                 
@@ -881,11 +917,28 @@ def show_profile():
                     fig = px.line(
                         x=dates,
                         y=confidences,
-                        title="Test Confidence Over Time"
+                        title="Test Confidence Over Time",
+                        color_discrete_sequence=['#4299e1']
                     )
                     fig.update_layout(
                         xaxis_title="Date",
-                        yaxis_title="Confidence"
+                        yaxis_title="Confidence",
+                        font=dict(size=14, color='#2d3748'),
+                        title_font=dict(size=18, color='#1a202c'),
+                        paper_bgcolor='rgba(0,0,0,0)',
+                        plot_bgcolor='rgba(0,0,0,0)',
+                        xaxis=dict(
+                            gridcolor='rgba(128,128,128,0.2)',
+                            linecolor='rgba(128,128,128,0.3)'
+                        ),
+                        yaxis=dict(
+                            gridcolor='rgba(128,128,128,0.2)',
+                            linecolor='rgba(128,128,128,0.3)'
+                        )
+                    )
+                    fig.update_traces(
+                        line=dict(width=3),
+                        marker=dict(size=8, color='#4299e1')
                     )
                     st.plotly_chart(fig, use_container_width=True)
             else:
