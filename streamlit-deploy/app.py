@@ -17,106 +17,189 @@ st.set_page_config(
     page_title="Personality Test App",
     page_icon="🧠",
     layout="wide",
-    initial_sidebar_state="collapsed"
+    initial_sidebar_state="expanded"
 )
 
 # Modern CSS Design with Better Visibility
 st.markdown("""
 <style>
     /* Google Fonts */
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    /* App container */
     .stApp {
-        background: linear-gradient(135deg, #23272a 0%, #111 100%);
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
         font-family: 'Inter', sans-serif;
-        color: #111 !important;
+        color: #1f2937;
     }
-    h1, h2, h3, h4, h5, h6 {
-        color: #111 !important;
+    
+    /* Hide Streamlit branding */
+    #MainMenu, footer, header {visibility: hidden;}
+    
+    /* Main container */
+    .main .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        max-width: 1200px;
+    }
+    
+    /* Titles & headings */
+    h1, h2, h3 {
+        color: #111827 !important;
         font-weight: 700;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
+    
+    /* Sidebar styling */
+    .css-1d391kg {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    /* Input fields */
     .stTextInput input, .stTextArea textarea, .stSelectbox select {
-        background: #23272a !important;
-        color: #111 !important;
-        border: 1px solid #444 !important;
+        background: rgba(255, 255, 255, 0.9) !important;
+        border: 1px solid #d1d5db !important;
         border-radius: 8px !important;
         padding: 12px 16px !important;
         font-size: 16px !important;
-        font-weight: 500 !important;
+        transition: all 0.3s ease !important;
     }
-    .stTextInput input::placeholder, .stTextArea textarea::placeholder {
-        color: #111 !important;
-        opacity: 1 !important;
+    
+    .stTextInput input:focus, .stTextArea textarea:focus {
+        border-color: #6366f1 !important;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+        outline: none !important;
     }
-    .stButton button, .stFormSubmitButton button {
-        background: linear-gradient(135deg, #111, #23272a) !important;
-        color: #fff !important;
+    
+    /* Form containers */
+    .stForm {
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px);
+        padding: 2rem !important;
+        border-radius: 20px !important;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        margin: 1rem 0 !important;
+    }
+    
+    /* Button styling */
+    .stButton button {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+        color: white !important;
         border: none !important;
         border-radius: 12px !important;
-        font-weight: 700 !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.3) !important;
-    }
-    .stButton button:hover, .stFormSubmitButton button:hover {
-        background: linear-gradient(135deg, #23272a, #111) !important;
-        color: #fff !important;
-    }
-    /* Fixed navigation bar */
-    .fixed-nav {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100vw;
-        z-index: 1000;
-        background: #111 !important;
-        color: #fff !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        padding: 1rem 0.5rem;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-    .fixed-nav .nav-btn {
-        background: #23272a !important;
-        color: #fff !important;
-        border: none !important;
-        border-radius: 8px !important;
-        margin: 0 0.5rem;
-        font-weight: 700 !important;
-        padding: 0.7rem 1.5rem !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-        transition: background 0.2s;
-    }
-    .fixed-nav .nav-btn:hover {
-        background: #111 !important;
-        color: #fff !important;
-    }
-    /* Hide sidebar completely */
-    .css-1d391kg, [data-testid="stSidebar"], .css-sidebar {
-        display: none !important;
-    }
-    /* Main container full width */
-    .main .block-container {
-        max-width: 100vw !important;
-        padding-left: 2rem !important;
-        padding-right: 2rem !important;
-    }
-    /* Metrics dark styling */
-    [data-testid="metric-container"] {
-        background: #23272a !important;
-        color: #fff !important;
-        border: 2px solid #111 !important;
-        border-radius: 16px !important;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.3) !important;
-    }
-    [data-testid="metric-container"] [data-testid="metric-value"] {
-        color: #fff !important;
-        font-size: 2.5rem !important;
-        font-weight: 800 !important;
-    }
-    [data-testid="metric-container"] [data-testid="metric-label"] {
-        color: #fff !important;
+        padding: 12px 24px !important;
         font-weight: 600 !important;
-        font-size: 1.1rem !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3) !important;
+    }
+    
+    .stButton button:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4) !important;
+    }
+    
+    /* Success messages */
+    .stSuccess {
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%) !important;
+        color: white !important;
+        border-radius: 12px !important;
+        padding: 1rem !important;
+        border: none !important;
+        box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3) !important;
+    }
+    
+    /* Error messages */
+    .stError {
+        background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%) !important;
+        color: white !important;
+        border-radius: 12px !important;
+        padding: 1rem !important;
+        border: none !important;
+        box-shadow: 0 4px 15px rgba(245, 101, 101, 0.3) !important;
+    }
+    
+    /* Info messages */
+    .stInfo {
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
+        color: white !important;
+        border-radius: 12px !important;
+        padding: 1rem !important;
+        border: none !important;
+        box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3) !important;
+    }
+    
+    /* Slider styling */
+    .stSlider {
+        padding: 1rem 0 !important;
+    }
+    
+    .stSlider > div > div > div {
+        background: linear-gradient(90deg, #e5e7eb, #6366f1) !important;
+        height: 8px !important;
+        border-radius: 4px !important;
+    }
+    
+    /* Cards & results */
+    .personality-card {
+        background: rgba(255, 255, 255, 0.9) !important;
+        backdrop-filter: blur(10px) !important;
+        border-radius: 16px !important;
+        padding: 2rem !important;
+        margin: 1rem 0 !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    }
+    
+    .introvert-card {
+        border-left: 5px solid #3b82f6 !important;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(147, 197, 253, 0.05)) !important;
+    }
+    
+    .extrovert-card {
+        border-left: 5px solid #ef4444 !important;
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(252, 165, 165, 0.05)) !important;
+    }
+    
+    .ambivert-card {
+        border-left: 5px solid #8b5cf6 !important;
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(196, 181, 253, 0.05)) !important;
+    }
+    
+    /* Form styling */
+    .stForm {
+        background: rgba(255, 255, 255, 0.8) !important;
+        padding: 2rem !important;
+        border-radius: 16px !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        backdrop-filter: blur(10px) !important;
+    }
+    
+    /* Alert styling */ 
+    .stAlert {
+        border-radius: 12px !important;
+        border: none !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
+    }
+    
+    /* Text elements */
+    .stMarkdown, .stText {
+        color: #374151 !important;
+    }
+    
+    /* Metrics */
+    .metric-container {
+        background: rgba(255, 255, 255, 0.9) !important;
+        padding: 1.5rem !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+        text-align: center !important;
+    }
+        border-radius: 8px !important;
+        padding: 0.5rem !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -387,27 +470,6 @@ def show_dashboard():
         st.session_state.page = 'login'
         st.rerun()
     
-    # Fixed dark navigation bar
-    nav_col1, nav_col2, nav_col3, nav_col4, nav_col5 = st.columns([1,1,1,1,1])
-    with nav_col1:
-        if st.button("🏠 Dashboard", key="nav_dashboard"):
-            st.session_state.page = "Dashboard"
-    with nav_col2:
-        if st.button("🧠 Take Test", key="nav_test"):
-            st.session_state.page = "Take Test"
-    with nav_col3:
-        if st.button("📊 History", key="nav_history"):
-            st.session_state.page = "Test History"
-    with nav_col4:
-        if st.button("👤 Profile", key="nav_profile"):
-            st.session_state.page = "Profile"
-    with nav_col5:
-        if st.button("🚪 Logout", key="nav_logout"):
-            st.session_state.authenticated = False
-            st.session_state.user = None
-            st.session_state.page = 'login'
-            st.rerun()
-    
     # Route to selected page
     if page == "Dashboard":
         show_dashboard_content()
@@ -453,7 +515,7 @@ def show_dashboard_content():
                 recent_tests = tests[:5]  # Show last 5 tests
                 for test in recent_tests:
                     advice = PERSONALITY_ADVICE.get(test["prediction"], {})
-                    with st.expander(f"{advice.get('icon', '❓')} {test['prediction']} - {test['created_at'].strftime('%Y-%m-%d %H:%M')}" ):
+                    with st.expander(f"{advice.get('icon', '❓')} {test['prediction']} - {test['created_at'].strftime('%Y-%m-%d %H:%M')} +5:30"):
                         col1, col2 = st.columns(2)
                         with col1:
                             st.write(f"**Confidence:** {test['confidence']:.1%}")
@@ -543,119 +605,107 @@ def show_personality_test():
                         "probabilities": prob_dict,
                         "features": responses
                     }
-                    st.session_state.show_results = True
-                    st.rerun()
+                    
+                    # Show results
+                    show_test_results(prediction, confidence, prob_dict)
                 else:
                     st.error("Failed to save test results")
             else:
                 st.error("Database connection failed")
-    
-    # Show results outside the form if available
-    if hasattr(st.session_state, 'show_results') and st.session_state.show_results:
-        if hasattr(st.session_state, 'latest_result'):
-            result = st.session_state.latest_result
-            show_test_results(result["prediction"], result["confidence"], result["probabilities"])
-            # Clear the flag
-            st.session_state.show_results = False
 
 def show_test_results(prediction, confidence, probabilities):
-    """Show test results with error handling"""
-    try:
-        advice = PERSONALITY_ADVICE.get(prediction, {})
+    """Show test results"""
+    advice = PERSONALITY_ADVICE.get(prediction, {})
+    
+    # Main result card
+    st.success("Test completed successfully!")
+    
+    # Result display
+    col1, col2 = st.columns([2, 1])
+    
+    with col1:
+        # Personality result card
+        card_class = f"{prediction.lower()}-card"
+        st.markdown(f"""
+        <div class="personality-card {card_class}">
+            <h1 style="text-align: center; font-size: 3rem; margin: 0;">{advice.get('icon', '❓')}</h1>
+            <h2 style="text-align: center; color: #333; margin: 10px 0;">{prediction}</h2>
+            <h3 style="text-align: center; color: #666;">{confidence:.1%} Confidence</h3>
+            <p style="text-align: center; color: #555; margin: 15px 0;">{advice.get('description', '')}</p>
+        </div>
+        """, unsafe_allow_html=True)
+    
+    with col2:
+        # Probability chart
+        st.subheader("📊 Probabilities")
+        prob_df = pd.DataFrame(
+            list(probabilities.items()),
+            columns=['Personality', 'Probability']
+        )
         
-        # Main result card
-        st.success("Test completed successfully!")
-        
-        # Result display
-        col1, col2 = st.columns([2, 1])
-        
-        with col1:
-            # Personality result card
-            card_class = f"{prediction.lower()}-card"
-            st.markdown(f"""
-            <div class="personality-card {card_class}">
-                <h1 style="text-align: center; font-size: 3rem; margin: 0;">{advice.get('icon', '❓')}</h1>
-                <h2 style="text-align: center; color: #333; margin: 10px 0;">{prediction}</h2>
-                <h3 style="text-align: center; color: #666;">{confidence:.1%} Confidence</h3>
-                <p style="text-align: center; color: #555; margin: 15px 0;">{advice.get('description', '')}</p>
-            </div>
-            """, unsafe_allow_html=True)
-        
-        with col2:
-            # Probability chart
-            st.subheader("📊 Probabilities")
-            prob_df = pd.DataFrame(
-                list(probabilities.items()),
-                columns=['Personality', 'Probability']
+        fig = px.pie(
+            prob_df, 
+            values='Probability', 
+            names='Personality',
+            color_discrete_map={
+                'Extrovert': '#ed8936',
+                'Introvert': '#4299e1', 
+                'Ambivert': '#9f7aea'
+            },
+            title="Personality Type Probabilities"
+        )
+        fig.update_traces(
+            textposition='inside', 
+            textinfo='percent+label',
+            textfont=dict(size=14, color='white'),
+            marker=dict(line=dict(color='white', width=2))
+        )
+        fig.update_layout(
+            font=dict(size=14, color='#2d3748'),
+            title_font=dict(size=18, color='#1a202c'),
+            paper_bgcolor='rgba(0,0,0,0)',
+            plot_bgcolor='rgba(0,0,0,0)',
+            showlegend=True,
+            legend=dict(
+                orientation="v",
+                yanchor="middle",
+                y=0.5,
+                xanchor="left",
+                x=1.01
             )
-            
-            fig = px.pie(
-                prob_df, 
-                values='Probability', 
-                names='Personality',
-                color_discrete_map={
-                    'Extrovert': '#ed8936',
-                    'Introvert': '#4299e1', 
-                    'Ambivert': '#9f7aea'
-                },
-                title="Personality Type Probabilities"
-            )
-            fig.update_traces(
-                textposition='inside', 
-                textinfo='percent+label',
-                textfont=dict(size=14, color='white'),
-                marker=dict(line=dict(color='white', width=2))
-            )
-            fig.update_layout(
-                font=dict(size=14, color='#2d3748'),
-                title_font=dict(size=18, color='#1a202c'),
-                paper_bgcolor='rgba(0,0,0,0)',
-                plot_bgcolor='rgba(0,0,0,0)',
-                showlegend=True,
-                legend=dict(
-                    orientation="v",
-                    yanchor="middle",
-                    y=0.5,
-                    xanchor="left",
-                    x=1.01
-                )
-            )
-            st.plotly_chart(fig, use_container_width=True)
+        )
+        st.plotly_chart(fig, use_container_width=True)
+    
+    # Detailed sections
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        st.subheader("💪 Your Strengths")
+        for strength in advice.get('strengths', []):
+            st.write(f"• {strength}")
         
-        # Detailed sections
-        col1, col2 = st.columns(2)
-        
-        with col1:
-            st.subheader("💪 Your Strengths")
-            for strength in advice.get('strengths', []):
-                st.write(f"• {strength}")
-            
-            st.subheader("🎯 Career Suggestions")
-            for career in advice.get('career_suggestions', []):
-                st.write(f"• {career}")
-        
-        with col2:
-            st.subheader("💡 Personal Development Advice")
-            for tip in advice.get('advice', []):
-                st.write(f"• {tip}")
-        
-        # Action buttons
-        col1, col2, col3 = st.columns(3)
-        with col1:
-            if st.button("🔄 Take Another Test"):
-                st.rerun()
-        with col2:
-            if st.button("📊 View History"):
-                st.session_state.page = 'history'
-                st.rerun()
-        with col3:
-            if st.button("🏠 Go to Dashboard"):
-                st.session_state.page = 'dashboard'
-                st.rerun()
-                
-    except Exception as e:
-        st.error("⚠️ Error displaying results. Please try taking the test again.")
-        print(f"Error in show_test_results: {str(e)}")
+        st.subheader("🎯 Career Suggestions")
+        for career in advice.get('career_suggestions', []):
+            st.write(f"• {career}")
+    
+    with col2:
+        st.subheader("💡 Personal Development Advice")
+        for tip in advice.get('advice', []):
+            st.write(f"• {tip}")
+    
+    # Action buttons
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button("🔄 Take Another Test"):
+            st.rerun()
+    with col2:
+        if st.button("📊 View History"):
+            st.session_state.page = 'history'
+            st.rerun()
+    with col3:
+        if st.button("🏠 Go to Dashboard"):
+            st.session_state.page = 'dashboard'
+            st.rerun()
 
 def show_test_history():
     """Show test history"""
@@ -675,7 +725,7 @@ def show_test_history():
                 for test in tests:
                     advice = PERSONALITY_ADVICE.get(test["prediction"], {})
                     
-                    with st.expander(f"{advice.get('icon', '❓')} {test['prediction']} - {test['created_at'].strftime('%Y-%m-%d %H:%M')} - {test['confidence']:.1%} confidence"):
+                    with st.expander(f"{advice.get('icon', '❓')} {test['prediction']} - {test['created_at'].strftime('%Y-%m-%d %H:%M')} - {test['confidence']:.1%} confidence +5:30"):
                         col1, col2 = st.columns(2)
                         
                         with col1:
@@ -707,17 +757,15 @@ def show_profile():
     
     user = st.session_state.user
     
-    col1, col2 = st.columns([1, 3])
+    col1, col2 = st.columns([1, 2])
     
     with col1:
-        st.image("https://via.placeholder.com/120", caption="Profile Picture", width=120)
+        st.image("https://via.placeholder.com/150", caption="Profile Picture", width=150)
     
     with col2:
-        st.markdown(f"""
-        **👤 Name:** {user["name"]}  
-        **📧 Email:** {user["email"]}  
-        **📅 Member Since:** {user["created_at"].strftime("%Y-%m-%d")} +5:30
-        """)
+        st.write("**Name:**", user["name"])
+        st.write("**Email:**", user["email"])
+        st.write("**Member Since:**", user["created_at"].strftime("%Y-%m-%d") + " +5:30")
     
     # User statistics
     st.subheader("📈 Your Statistics")
@@ -731,7 +779,7 @@ def show_profile():
             
             if tests:
                 # Statistics
-                col1, col2, col3 = st.columns([1, 1, 1.2])
+                col1, col2, col3 = st.columns(3)
                 
                 with col1:
                     st.metric("Total Tests", len(tests))
@@ -749,7 +797,6 @@ def show_profile():
                 
                 # Personality distribution chart
                 st.subheader("🎭 Personality Type Distribution")
-                st.markdown("*This chart shows how many times you've scored each personality type across all your tests.*")
                 
                 if personality_counts:
                     fig = px.bar(
@@ -761,41 +808,32 @@ def show_profile():
                             'Introvert': '#4299e1',
                             'Ambivert': '#9f7aea'
                         },
-                        title="Your Personality Test Results Distribution",
-                        labels={
-                            'x': 'Personality Type Categories',
-                            'y': 'Number of Times Scored'
-                        }
+                        title="Personality Type Distribution"
                     )
                     fig.update_layout(
-                        xaxis_title="<b>Personality Type Categories</b><br><i>(Based on test responses)</i>",
-                        yaxis_title="<b>Number of Times Scored</b><br><i>(Total test count per type)</i>",
+                        xaxis_title="Personality Type",
+                        yaxis_title="Number of Tests",
                         showlegend=False,
-                        font=dict(size=13, color='#2d3748'),
-                        title_font=dict(size=16, color='#1a202c'),
+                        font=dict(size=14, color='#2d3748'),
+                        title_font=dict(size=18, color='#1a202c'),
                         paper_bgcolor='rgba(0,0,0,0)',
                         plot_bgcolor='rgba(0,0,0,0)',
-                        height=400,
                         xaxis=dict(
                             gridcolor='rgba(128,128,128,0.2)',
-                            linecolor='rgba(128,128,128,0.3)',
-                            tickangle=0
+                            linecolor='rgba(128,128,128,0.3)'
                         ),
                         yaxis=dict(
                             gridcolor='rgba(128,128,128,0.2)',
-                            linecolor='rgba(128,128,128,0.3)',
-                            dtick=1
+                            linecolor='rgba(128,128,128,0.3)'
                         )
                     )
                     fig.update_traces(
-                        marker=dict(line=dict(color='white', width=1)),
-                        hovertemplate="<b>%{x}</b><br>Tests: %{y}<br><extra></extra>"
+                        marker=dict(line=dict(color='white', width=1))
                     )
                     st.plotly_chart(fig, use_container_width=True)
                 
                 # Confidence over time
-                st.subheader("📈 Confidence Trend Analysis")
-                st.markdown("*This line chart tracks how confident the AI model was in predicting your personality type over time.*")
+                st.subheader("📈 Confidence Over Time")
                 
                 confidence_data = [(test["created_at"], test["confidence"]) for test in reversed(tests)]
                 if confidence_data:
@@ -804,70 +842,45 @@ def show_profile():
                     fig = px.line(
                         x=dates,
                         y=confidences,
-                        title="AI Model Confidence in Your Personality Predictions",
-                        color_discrete_sequence=['#4299e1'],
-                        labels={
-                            'x': 'Test Date Timeline',
-                            'y': 'AI Confidence Score'
-                        }
+                        title="Test Confidence Over Time",
+                        color_discrete_sequence=['#4299e1']
                     )
                     fig.update_layout(
-                        xaxis_title="<b>Test Date Timeline</b><br><i>(Chronological order of tests taken)</i>",
-                        yaxis_title="<b>AI Confidence Score</b><br><i>(0-100% model certainty)</i>",
-                        font=dict(size=13, color='#2d3748'),
-                        title_font=dict(size=16, color='#1a202c'),
+                        xaxis_title="Date",
+                        yaxis_title="Confidence",
+                        font=dict(size=14, color='#2d3748'),
+                        title_font=dict(size=18, color='#1a202c'),
                         paper_bgcolor='rgba(0,0,0,0)',
                         plot_bgcolor='rgba(0,0,0,0)',
-                        height=400,
                         xaxis=dict(
                             gridcolor='rgba(128,128,128,0.2)',
-                            linecolor='rgba(128,128,128,0.3)',
-                            showgrid=True
+                            linecolor='rgba(128,128,128,0.3)'
                         ),
                         yaxis=dict(
                             gridcolor='rgba(128,128,128,0.2)',
-                            linecolor='rgba(128,128,128,0.3)',
-                            showgrid=True,
-                            tickformat='.0%',
-                            range=[0, 1]
+                            linecolor='rgba(128,128,128,0.3)'
                         )
                     )
                     fig.update_traces(
                         line=dict(width=3),
-                        marker=dict(size=8, color='#4299e1'),
-                        hovertemplate="<b>Date:</b> %{x|%Y-%m-%d}<br><b>Confidence:</b> %{y:.1%}<br><extra></extra>"
+                        marker=dict(size=8, color='#4299e1')
                     )
                     st.plotly_chart(fig, use_container_width=True)
             else:
                 st.info("No test data available for statistics.")
 
-# Error handling wrapper
-def safe_execute(func, *args, **kwargs):
-    """Safely execute functions with error handling"""
-    try:
-        return func(*args, **kwargs)
-    except Exception as e:
-        st.error("⚠️ Something went wrong. Please try again or contact support.")
-        # Log error for debugging (in production, use proper logging)
-        print(f"Error in {func.__name__}: {str(e)}")
-        return None
-
 # Main app logic
 def main():
-    """Main application logic with error handling"""
-    try:
-        init_session_state()
-        
-        # Route based on authentication status
-        if not st.session_state.authenticated:
-            safe_execute(show_auth_page)
-        else:
-            safe_execute(show_dashboard)
-            
-    except Exception as e:
-        st.error("🔧 Application is temporarily unavailable. Please refresh the page.")
-        # Hide detailed error from users
-        print(f"Main app error: {str(e)}")
+    """Main application logic"""
+    init_session_state()
+    
+
+    
+    # Route based on authentication status
+    if not st.session_state.authenticated:
+        show_auth_page()
+    else:
+        show_dashboard()
 
 if __name__ == "__main__":
     main()
