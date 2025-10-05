@@ -749,18 +749,19 @@ def show_dashboard():
     
     render_heading(f"Welcome, {st.session_state.user['name']}!", "👋")
     
-    # Sidebar navigation (still keep for desktop users)
+    # Sidebar navigation (desktop) + sync with top nav buttons
     st.sidebar.title("Navigation")
-    # Use nav_override when set by buttons elsewhere (results/history)
     options = ["Dashboard", "Take Test", "Test History", "Profile"]
-    default = st.session_state.get('nav_override', None)
-    if default and default in options:
-        page = st.sidebar.selectbox("Go to:", options, index=options.index(default), key="nav_select")
-        # clear override after use - but after page navigation
-        if st.session_state.get('nav_override') == page:
-            st.session_state.pop('nav_override', None)
-    else:
-        page = st.sidebar.selectbox("Go to:", options, key="nav_select")
+    # If a top-nav button was clicked, push that value into the selectbox state
+    override = st.session_state.pop('nav_override', None)
+    if override in options:
+        st.session_state["nav_select"] = override
+    with nav_col3:
+        if st.button("📊 History", key="nav_history", use_container_width=True):
+            st.session_state.nav_override = 'Test History'
+            st.rerun()
+    # Single source of truth for current page
+    page = st.sidebar.selectbox("Go to:", options, key="nav_select")
     
     if st.sidebar.button("Logout"):
         st.session_state.authenticated = False
