@@ -20,85 +20,261 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Clean CSS Design
+# Modern CSS Design with Better Visibility
 st.markdown("""
 <style>
-    /* Main app background - clean white */
+    /* Import Google Fonts */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    /* Main app styling */
     .stApp {
-        background-color: white;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        font-family: 'Inter', sans-serif;
     }
     
-    /* Input fields */
+    /* Hide Streamlit branding */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    
+    /* Main container */
+    .main .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+        max-width: 1200px;
+    }
+    
+    /* Titles and headers */
+    .stTitle {
+        color: #ffffff !important;
+        text-align: center;
+        font-weight: 700;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    h1, h2, h3 {
+        color: #2d3748 !important;
+        font-weight: 600;
+    }
+    
+    /* Sidebar styling */
+    .css-1d391kg {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 15px;
+        margin: 1rem;
+        padding: 1.5rem;
+    }
+    
+    /* Input fields with better visibility */
     .stTextInput > div > div > input {
-        height: 40px;
-        border: 2px solid #ddd;
-        border-radius: 6px;
-        font-size: 16px;
+        background-color: #ffffff !important;
+        color: #2d3748 !important;
+        border: 2px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        padding: 12px 16px !important;
+        font-size: 16px !important;
+        font-weight: 500 !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+        transition: all 0.3s ease !important;
     }
     
-    /* Forms */
+    .stTextInput > div > div > input:focus {
+        border-color: #667eea !important;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+        outline: none !important;
+    }
+    
+    /* Selectbox styling */
+    .stSelectbox > div > div > select {
+        background-color: #ffffff !important;
+        color: #2d3748 !important;
+        border: 2px solid #e2e8f0 !important;
+        border-radius: 12px !important;
+        padding: 12px 16px !important;
+        font-size: 16px !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Form containers */
     .stForm {
-        background: white;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        border: 1px solid #eee;
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px);
+        padding: 2rem !important;
+        border-radius: 20px !important;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        margin: 1rem 0 !important;
     }
     
-    /* Buttons */
+    /* Buttons with modern design */
     .stButton > button {
-        background: #007acc;
-        color: white;
-        border: none;
-        border-radius: 6px;
-        padding: 10px 20px;
-        font-weight: bold;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 12px 24px !important;
+        font-weight: 600 !important;
+        font-size: 16px !important;
+        box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4) !important;
+        transition: all 0.3s ease !important;
+        text-transform: none !important;
     }
     
     .stButton > button:hover {
-        background: #005c99;
+        transform: translateY(-2px) !important;
+        box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6) !important;
+    }
+    
+    /* Secondary buttons */
+    .stButton > button[kind="secondary"] {
+        background: rgba(255, 255, 255, 0.9) !important;
+        color: #667eea !important;
+        border: 2px solid #667eea !important;
     }
     
     /* Success messages */
     .stSuccess {
-        background: #d4edda;
-        color: #155724;
-        border-left: 4px solid #28a745;
+        background: linear-gradient(135deg, #48bb78 0%, #38a169 100%) !important;
+        color: white !important;
+        border-radius: 12px !important;
+        padding: 1rem !important;
+        border: none !important;
+        box-shadow: 0 4px 15px rgba(72, 187, 120, 0.3) !important;
     }
     
     /* Error messages */
     .stError {
-        background: #f8d7da;
-        color: #721c24;
-        border-left: 4px solid #dc3545;
+        background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%) !important;
+        color: white !important;
+        border-radius: 12px !important;
+        padding: 1rem !important;
+        border: none !important;
+        box-shadow: 0 4px 15px rgba(245, 101, 101, 0.3) !important;
     }
     
-    /* Sliders */
+    /* Info messages */
+    .stInfo {
+        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
+        color: white !important;
+        border-radius: 12px !important;
+        padding: 1rem !important;
+        border: none !important;
+        box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3) !important;
+    }
+    
+    /* Sliders with better styling */
     .stSlider > div > div > div {
-        background: #007acc;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+        border-radius: 8px !important;
     }
     
-    /* Personality cards */
+    .stSlider > div > div > div > div {
+        background: white !important;
+        border: 3px solid #667eea !important;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2) !important;
+    }
+    
+    /* Metrics styling */
+    .metric-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        text-align: center;
+        margin: 0.5rem;
+    }
+    
+    /* Personality cards with glass effect */
     .personality-card {
-        padding: 20px;
-        border-radius: 10px;
-        margin: 10px 0;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        background: rgba(255, 255, 255, 0.95) !important;
+        backdrop-filter: blur(10px) !important;
+        padding: 2rem !important;
+        border-radius: 20px !important;
+        margin: 1rem 0 !important;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        text-align: center !important;
     }
     
     .introvert-card {
-        background: #e3f2fd;
-        border-left: 5px solid #2196f3;
+        border-left: 6px solid #4299e1 !important;
+        background: linear-gradient(135deg, rgba(66, 153, 225, 0.1) 0%, rgba(49, 130, 206, 0.1) 100%) !important;
     }
     
     .extrovert-card {
-        background: #fff3e0;
-        border-left: 5px solid #ff9800;
+        border-left: 6px solid #ed8936 !important;
+        background: linear-gradient(135deg, rgba(237, 137, 54, 0.1) 0%, rgba(221, 107, 32, 0.1) 100%) !important;
     }
     
     .ambivert-card {
-        background: #f3e5f5;
-        border-left: 5px solid #9c27b0;
+        border-left: 6px solid #9f7aea !important;
+        background: linear-gradient(135deg, rgba(159, 122, 234, 0.1) 0%, rgba(128, 90, 213, 0.1) 100%) !important;
+    }
+    
+    /* Tabs styling */
+    .stTabs > div > div > div > div {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-radius: 12px 12px 0 0 !important;
+        border-bottom: 3px solid transparent !important;
+    }
+    
+    .stTabs > div > div > div > div[aria-selected="true"] {
+        background: rgba(255, 255, 255, 0.95) !important;
+        border-bottom-color: #667eea !important;
+        color: #667eea !important;
+        font-weight: 600 !important;
+    }
+    
+    /* Expander styling */
+    .streamlit-expanderHeader {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        margin: 0.5rem 0 !important;
+    }
+    
+    .streamlit-expanderContent {
+        background: rgba(255, 255, 255, 0.95) !important;
+        border-radius: 0 0 12px 12px !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        border-top: none !important;
+    }
+    
+    /* Plotly charts container */
+    .js-plotly-plot {
+        border-radius: 12px !important;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+    }
+    
+    /* General text color fixes */
+    p, div, span {
+        color: #2d3748 !important;
+    }
+    
+    /* Caption styling */
+    .stCaption {
+        color: #718096 !important;
+        font-size: 14px !important;
+    }
+    
+    /* Markdown content */
+    .stMarkdown {
+        color: #2d3748 !important;
+    }
+    
+    /* Progress bar */
+    .stProgress > div > div > div > div {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    }
+    
+    /* Checkbox styling */
+    .stCheckbox > label > div {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border-radius: 8px !important;
+        padding: 0.5rem !important;
     }
 </style>
 """, unsafe_allow_html=True)
