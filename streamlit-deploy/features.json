@@ -1,0 +1,14 @@
+{
+  "features": [
+    "party_liking",
+    "public_speaking_comfort", 
+    "excitement_seeking",
+    "alone_time_preference",
+    "talkativeness",
+    "social_energy",
+    "leadership",
+    "reading_habit",
+    "adventurousness",
+    "group_comfort"
+  ]
+}
