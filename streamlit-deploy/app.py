@@ -28,9 +28,9 @@ st.markdown("""
     
     /* App container */
     .stApp {
-        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+        background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
         font-family: 'Inter', sans-serif;
-        color: #1f2937;
+        color: #0f172a; /* darker text (not white) */
     }
     
     /* Hide Streamlit branding */
@@ -60,7 +60,8 @@ st.markdown("""
     
     /* Input fields */
     .stTextInput input, .stTextArea textarea, .stSelectbox select {
-        background: rgba(255, 255, 255, 0.9) !important;
+        background: #f8fafc !important; /* light background but not pure white */
+        color: #0f172a !important; /* dark text for visibility */
         border: 1px solid #d1d5db !important;
         border-radius: 8px !important;
         padding: 12px 16px !important;
@@ -87,19 +88,19 @@ st.markdown("""
     
     /* Button styling */
     .stButton button {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
-        color: white !important;
+        background: linear-gradient(135deg, #34d399, #10b981) !important; /* green */
+        color: #000000 !important; /* black text */
         border: none !important;
         border-radius: 12px !important;
         padding: 12px 24px !important;
         font-weight: 600 !important;
-        transition: all 0.3s ease !important;
-        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3) !important;
+        transition: all 0.15s ease !important;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.18) !important;
     }
-    
+
     .stButton button:hover {
-        transform: translateY(-2px) !important;
-        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 8px 20px rgba(16, 185, 129, 0.22) !important;
     }
     
     /* Success messages */
@@ -145,13 +146,13 @@ st.markdown("""
     
     /* Cards & results */
     .personality-card {
-        background: rgba(255, 255, 255, 0.9) !important;
-        backdrop-filter: blur(10px) !important;
+        background: #ffffff !important;
+        backdrop-filter: blur(6px) !important;
         border-radius: 16px !important;
         padding: 2rem !important;
         margin: 1rem 0 !important;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06) !important;
+        border: 1px solid rgba(15, 23, 42, 0.04) !important;
     }
     
     .introvert-card {
@@ -187,7 +188,7 @@ st.markdown("""
     
     /* Text elements */
     .stMarkdown, .stText {
-        color: #374151 !important;
+        color: #0f172a !important; /* always dark text */
     }
     
     /* Metrics */
@@ -515,7 +516,13 @@ def show_dashboard_content():
                 recent_tests = tests[:5]  # Show last 5 tests
                 for test in recent_tests:
                     advice = PERSONALITY_ADVICE.get(test["prediction"], {})
-                    with st.expander(f"{advice.get('icon', '❓')} {test['prediction']} - {test['created_at'].strftime('%Y-%m-%d %H:%M')} +5:30"):
+                    # Display created_at with +5:30 offset
+                    try:
+                        display_time = (test['created_at'] + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d %H:%M')
+                    except Exception:
+                        display_time = str(test.get('created_at'))
+
+                    with st.expander(f"{advice.get('icon', '❓')} {test['prediction']} - {display_time} (+05:30)"):
                         col1, col2 = st.columns(2)
                         with col1:
                             st.write(f"**Confidence:** {test['confidence']:.1%}")
@@ -543,6 +550,12 @@ def show_personality_test():
         st.error("Failed to load prediction models")
         return
     
+    # If we have a result saved in session state and flagged, show it (outside form)
+    if st.session_state.get('show_results') and st.session_state.get('latest_result'):
+        res = st.session_state.latest_result
+        show_test_results(res['prediction'], res['confidence'], res['probabilities'])
+        return
+
     # Create form for personality test
     with st.form("personality_test"):
         responses = {}
@@ -605,9 +618,10 @@ def show_personality_test():
                         "probabilities": prob_dict,
                         "features": responses
                     }
-                    
-                    # Show results
-                    show_test_results(prediction, confidence, prob_dict)
+                    # Do not call show_test_results() here while inside form.
+                    # Instead, set a flag and rerun so results render outside the form context.
+                    st.session_state.show_results = True
+                    st.rerun()
                 else:
                     st.error("Failed to save test results")
             else:
@@ -630,7 +644,7 @@ def show_test_results(prediction, confidence, probabilities):
         <div class="personality-card {card_class}">
             <h1 style="text-align: center; font-size: 3rem; margin: 0;">{advice.get('icon', '❓')}</h1>
             <h2 style="text-align: center; color: #333; margin: 10px 0;">{prediction}</h2>
-            <h3 style="text-align: center; color: #666;">{confidence:.1%} Confidence</h3>
+            <h3 style="text-align: center; color: #1f2937;">{confidence:.1%} Confidence</h3>
             <p style="text-align: center; color: #555; margin: 15px 0;">{advice.get('description', '')}</p>
         </div>
         """, unsafe_allow_html=True)
@@ -657,12 +671,12 @@ def show_test_results(prediction, confidence, probabilities):
         fig.update_traces(
             textposition='inside', 
             textinfo='percent+label',
-            textfont=dict(size=14, color='white'),
-            marker=dict(line=dict(color='white', width=2))
+            textfont=dict(size=14, color='#0f172a'),
+            marker=dict(line=dict(color='#0f172a', width=1))
         )
         fig.update_layout(
-            font=dict(size=14, color='#2d3748'),
-            title_font=dict(size=18, color='#1a202c'),
+            font=dict(size=14, color='#0f172a'),
+            title_font=dict(size=18, color='#0b1220'),
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
             showlegend=True,
@@ -697,6 +711,10 @@ def show_test_results(prediction, confidence, probabilities):
     col1, col2, col3 = st.columns(3)
     with col1:
         if st.button("🔄 Take Another Test"):
+            # Clear latest result and flag then go back to test
+            st.session_state.pop('latest_result', None)
+            st.session_state.pop('show_results', None)
+            st.session_state.page = 'test'
             st.rerun()
     with col2:
         if st.button("📊 View History"):
@@ -724,15 +742,24 @@ def show_test_history():
                 # History table
                 for test in tests:
                     advice = PERSONALITY_ADVICE.get(test["prediction"], {})
-                    
-                    with st.expander(f"{advice.get('icon', '❓')} {test['prediction']} - {test['created_at'].strftime('%Y-%m-%d %H:%M')} - {test['confidence']:.1%} confidence +5:30"):
+                    # Format created_at with +5:30 offset
+                    try:
+                        display_time = (test['created_at'] + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d %H:%M')
+                    except Exception:
+                        display_time = str(test.get('created_at'))
+
+                    with st.expander(f"{advice.get('icon', '❓')} {test['prediction']} - {display_time} - {test['confidence']:.1%} confidence (+05:30)"):
                         col1, col2 = st.columns(2)
                         
                         with col1:
                             st.write("**Prediction Details:**")
                             st.write(f"• Type: {test['prediction']}")
                             st.write(f"• Confidence: {test['confidence']:.1%}")
-                            st.write(f"• Date: {test['created_at'].strftime('%Y-%m-%d %H:%M')} +5:30")
+                            try:
+                                date_display = (test['created_at'] + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d %H:%M')
+                            except Exception:
+                                date_display = str(test.get('created_at'))
+                            st.write(f"• Date: {date_display} (+05:30)")
                         
                         with col2:
                             st.write("**Probabilities:**")
@@ -740,7 +767,15 @@ def show_test_history():
                                 st.write(f"• {personality}: {prob:.1%}")
                         
                         if st.button(f"View Full Results", key=f"view_full_{test['_id']}"):
-                            show_test_results(test['prediction'], test['confidence'], test['probabilities'])
+                            # Render full results (ensure time offset for display inside show_test_results is handled there)
+                            st.session_state.latest_result = {
+                                'prediction': test['prediction'],
+                                'confidence': test['confidence'],
+                                'probabilities': test['probabilities'],
+                                'features': test.get('features', {})
+                            }
+                            st.session_state.show_results = True
+                            st.rerun()
             else:
                 st.info("No tests completed yet.")
                 if st.button("Take Your First Test"):
@@ -765,7 +800,11 @@ def show_profile():
     with col2:
         st.write("**Name:**", user["name"])
         st.write("**Email:**", user["email"])
-        st.write("**Member Since:**", user["created_at"].strftime("%Y-%m-%d") + " +5:30")
+        try:
+            member_since = (user['created_at'] + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d')
+        except Exception:
+            member_since = str(user.get('created_at'))
+        st.write("**Member Since:**", member_since + " (+05:30)")
     
     # User statistics
     st.subheader("📈 Your Statistics")
@@ -797,7 +836,7 @@ def show_profile():
                 
                 # Personality distribution chart
                 st.subheader("🎭 Personality Type Distribution")
-                
+
                 if personality_counts:
                     fig = px.bar(
                         x=list(personality_counts.keys()),
@@ -814,51 +853,56 @@ def show_profile():
                         xaxis_title="Personality Type",
                         yaxis_title="Number of Tests",
                         showlegend=False,
-                        font=dict(size=14, color='#2d3748'),
-                        title_font=dict(size=18, color='#1a202c'),
+                        font=dict(size=14, color='#0f172a'),
+                        title_font=dict(size=18, color='#0b1220'),
                         paper_bgcolor='rgba(0,0,0,0)',
                         plot_bgcolor='rgba(0,0,0,0)',
                         xaxis=dict(
-                            gridcolor='rgba(128,128,128,0.2)',
-                            linecolor='rgba(128,128,128,0.3)'
+                            gridcolor='rgba(128,128,128,0.08)',
+                            linecolor='rgba(15,23,42,0.08)'
                         ),
                         yaxis=dict(
-                            gridcolor='rgba(128,128,128,0.2)',
-                            linecolor='rgba(128,128,128,0.3)'
+                            gridcolor='rgba(128,128,128,0.08)',
+                            linecolor='rgba(15,23,42,0.08)'
                         )
                     )
                     fig.update_traces(
-                        marker=dict(line=dict(color='white', width=1))
+                        marker=dict(line=dict(color='#0f172a', width=1))
                     )
                     st.plotly_chart(fig, use_container_width=True)
                 
                 # Confidence over time
                 st.subheader("📈 Confidence Over Time")
-                
+
                 confidence_data = [(test["created_at"], test["confidence"]) for test in reversed(tests)]
                 if confidence_data:
+                    # Apply timezone offset for display
                     dates, confidences = zip(*confidence_data)
-                    
+                    try:
+                        dates_display = [(d + timedelta(hours=5, minutes=30)) for d in dates]
+                    except Exception:
+                        dates_display = dates
+
                     fig = px.line(
-                        x=dates,
+                        x=dates_display,
                         y=confidences,
                         title="Test Confidence Over Time",
                         color_discrete_sequence=['#4299e1']
                     )
                     fig.update_layout(
-                        xaxis_title="Date",
+                        xaxis_title="Date (+05:30)",
                         yaxis_title="Confidence",
-                        font=dict(size=14, color='#2d3748'),
-                        title_font=dict(size=18, color='#1a202c'),
+                        font=dict(size=14, color='#0f172a'),
+                        title_font=dict(size=18, color='#0b1220'),
                         paper_bgcolor='rgba(0,0,0,0)',
                         plot_bgcolor='rgba(0,0,0,0)',
                         xaxis=dict(
-                            gridcolor='rgba(128,128,128,0.2)',
-                            linecolor='rgba(128,128,128,0.3)'
+                            gridcolor='rgba(128,128,128,0.08)',
+                            linecolor='rgba(15,23,42,0.08)'
                         ),
                         yaxis=dict(
-                            gridcolor='rgba(128,128,128,0.2)',
-                            linecolor='rgba(128,128,128,0.3)'
+                            gridcolor='rgba(128,128,128,0.08)',
+                            linecolor='rgba(15,23,42,0.08)'
                         )
                     )
                     fig.update_traces(
