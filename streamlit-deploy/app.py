@@ -134,7 +134,7 @@ st.markdown("""
 def init_connection():
     """Initialize MongoDB connection"""
     try:
-        client = MongoClient("mongodb+srv://herozeroyaaro:2ZOOVPJAHfsz4F44@fdm.hd64spw.mongodb.net/?retryWrites=true&w=majority&appName=fdm")
+        client = MongoClient("mongodb+srv://streamlit_user:ULnY2laU64LKScPH@fdm.hd64spw.mongodb.net/?retryWrites=true&w=majority&appName=fdm")
         db = client.personality_app
         return db
     except Exception as e:
