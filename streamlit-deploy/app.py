@@ -80,12 +80,13 @@ st.markdown("""
     
     /* Metrics styling */
     .metric-container {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
+        background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
+        color: #2c3e50;
         padding: 1.5rem;
         border-radius: 12px;
         text-align: center;
         margin: 0.5rem 0;
+        border: 1px solid #d1e7dd;
     }
     
     /* Success/Error message styling */
@@ -98,7 +99,8 @@ st.markdown("""
     
     /* Sidebar improvements */
     .css-1d391kg {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+        border-right: 1px solid #e0e0e0;
     }
     
     /* Remove extra padding */
@@ -146,11 +148,19 @@ def init_connection():
 def load_models():
     """Load personality prediction models"""
     try:
-        model = joblib.load("joblib/final_gnb_personality_model.joblib")
-        le = joblib.load("joblib/personality_label_encoder.joblib")
+        import os
+        # Get the directory where this script is located
+        current_dir = os.path.dirname(os.path.abspath(__file__))
+        model_path = os.path.join(current_dir, "joblib", "final_gnb_personality_model.joblib")
+        le_path = os.path.join(current_dir, "joblib", "personality_label_encoder.joblib")
+        
+        model = joblib.load(model_path)
+        le = joblib.load(le_path)
         return model, le
     except Exception as e:
         st.error(f"Failed to load models: {e}")
+        st.error(f"Current working directory: {os.getcwd()}")
+        st.error(f"Script directory: {os.path.dirname(os.path.abspath(__file__))}")
         return None, None
 
 # Load features
@@ -542,12 +552,13 @@ def show_test_results(prediction, confidence, probabilities):
     
     with col1:
         st.markdown(f"""
-        <div style="background: linear-gradient(135deg, {advice.get('color', '#666')}, {advice.get('color', '#666')}55); 
-                    color: white; padding: 2rem; border-radius: 1rem; text-align: center; margin: 1rem 0;">
+        <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); 
+                    color: #2c3e50; padding: 2rem; border-radius: 1rem; text-align: center; margin: 1rem 0;
+                    border: 2px solid {advice.get('color', '#007acc')}; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
             <h1 style="margin: 0; font-size: 3rem;">{advice.get('icon', '❓')}</h1>
-            <h2 style="margin: 0.5rem 0;">{prediction}</h2>
-            <h3 style="margin: 0; opacity: 0.9;">{confidence:.1%} Confidence</h3>
-            <p style="margin: 1rem 0; opacity: 0.95;">{advice.get('description', '')}</p>
+            <h2 style="margin: 0.5rem 0; color: {advice.get('color', '#007acc')};">{prediction}</h2>
+            <h3 style="margin: 0; color: #495057;">{confidence:.1%} Confidence</h3>
+            <p style="margin: 1rem 0; color: #6c757d;">{advice.get('description', '')}</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -743,7 +754,7 @@ def main():
     st.markdown("""
     <style>
     .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
     }
     .stTabs [data-baseweb="tab-list"] {
         gap: 2px;
