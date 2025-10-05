@@ -756,10 +756,6 @@ def show_dashboard():
     override = st.session_state.pop('nav_override', None)
     if override in options:
         st.session_state["nav_select"] = override
-    with nav_col3:
-        if st.button("📊 History", key="nav_history", use_container_width=True):
-            st.session_state.nav_override = 'Test History'
-            st.rerun()
     # Single source of truth for current page
     page = st.sidebar.selectbox("Go to:", options, key="nav_select")
     
