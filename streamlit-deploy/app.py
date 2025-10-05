@@ -23,19 +23,18 @@ st.set_page_config(
 # Modern CSS Design with Better Visibility
 st.markdown("""
 <style>
-    /* Import Google Fonts */
+    /* Google Fonts */
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
     
-    /* Main app styling */
+    /* App container */
     .stApp {
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
         font-family: 'Inter', sans-serif;
+        color: #1f2937;
     }
     
     /* Hide Streamlit branding */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    header {visibility: hidden;}
+    #MainMenu, footer, header {visibility: hidden;}
     
     /* Main container */
     .main .block-container {
@@ -44,17 +43,10 @@ st.markdown("""
         max-width: 1200px;
     }
     
-    /* Titles and headers */
-    .stTitle {
-        color: #1a202c !important;
-        text-align: center;
-        font-weight: 700;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.1);
-    }
-    
+    /* Titles & headings */
     h1, h2, h3 {
-        color: #2d3748 !important;
-        font-weight: 600;
+        color: #111827 !important;
+        font-weight: 700;
     }
     
     /* Sidebar styling */
@@ -66,34 +58,20 @@ st.markdown("""
         padding: 1.5rem;
     }
     
-    /* Input fields with better visibility */
-    .stTextInput > div > div > input {
-        background-color: #ffffff !important;
-        color: #2d3748 !important;
-        border: 2px solid #e2e8f0 !important;
-        border-radius: 12px !important;
+    /* Input fields */
+    .stTextInput input, .stTextArea textarea, .stSelectbox select {
+        background: rgba(255, 255, 255, 0.9) !important;
+        border: 1px solid #d1d5db !important;
+        border-radius: 8px !important;
         padding: 12px 16px !important;
         font-size: 16px !important;
-        font-weight: 500 !important;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
         transition: all 0.3s ease !important;
     }
     
-    .stTextInput > div > div > input:focus {
-        border-color: #667eea !important;
-        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1) !important;
+    .stTextInput input:focus, .stTextArea textarea:focus {
+        border-color: #6366f1 !important;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
         outline: none !important;
-    }
-    
-    /* Selectbox styling */
-    .stSelectbox > div > div > select {
-        background-color: #ffffff !important;
-        color: #2d3748 !important;
-        border: 2px solid #e2e8f0 !important;
-        border-radius: 12px !important;
-        padding: 12px 16px !important;
-        font-size: 16px !important;
-        font-weight: 500 !important;
     }
     
     /* Form containers */
@@ -107,30 +85,21 @@ st.markdown("""
         margin: 1rem 0 !important;
     }
     
-    /* Buttons with modern design */
-    .stButton > button {
-        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
+    /* Button styling */
+    .stButton button {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
         color: white !important;
         border: none !important;
         border-radius: 12px !important;
         padding: 12px 24px !important;
         font-weight: 600 !important;
-        font-size: 16px !important;
-        box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3) !important;
         transition: all 0.3s ease !important;
-        text-transform: none !important;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3) !important;
     }
     
-    .stButton > button:hover {
+    .stButton button:hover {
         transform: translateY(-2px) !important;
-        box-shadow: 0 6px 20px rgba(66, 153, 225, 0.4) !important;
-    }
-    
-    /* Secondary buttons */
-    .stButton > button[kind="secondary"] {
-        background: rgba(255, 255, 255, 0.9) !important;
-        color: #4299e1 !important;
-        border: 2px solid #4299e1 !important;
+        box-shadow: 0 8px 25px rgba(99, 102, 241, 0.4) !important;
     }
     
     /* Success messages */
@@ -163,116 +132,72 @@ st.markdown("""
         box-shadow: 0 4px 15px rgba(66, 153, 225, 0.3) !important;
     }
     
-    /* Sliders with better styling */
+    /* Slider styling */
+    .stSlider {
+        padding: 1rem 0 !important;
+    }
+    
     .stSlider > div > div > div {
-        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
-        border-radius: 8px !important;
+        background: linear-gradient(90deg, #e5e7eb, #6366f1) !important;
+        height: 8px !important;
+        border-radius: 4px !important;
     }
     
-    .stSlider > div > div > div > div {
-        background: white !important;
-        border: 3px solid #4299e1 !important;
-        box-shadow: 0 2px 8px rgba(66, 153, 225, 0.3) !important;
-    }
-    
-    /* Metrics styling */
-    .metric-card {
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(10px);
-        border-radius: 16px;
-        padding: 1.5rem;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.1);
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        text-align: center;
-        margin: 0.5rem;
-    }
-    
-    /* Personality cards with glass effect */
+    /* Cards & results */
     .personality-card {
-        background: rgba(255, 255, 255, 0.98) !important;
+        background: rgba(255, 255, 255, 0.9) !important;
         backdrop-filter: blur(10px) !important;
+        border-radius: 16px !important;
         padding: 2rem !important;
-        border-radius: 20px !important;
         margin: 1rem 0 !important;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.08) !important;
-        border: 1px solid rgba(255, 255, 255, 0.3) !important;
-        text-align: center !important;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+        border: 1px solid rgba(255, 255, 255, 0.2) !important;
     }
     
     .introvert-card {
-        border-left: 6px solid #4299e1 !important;
-        background: linear-gradient(135deg, rgba(66, 153, 225, 0.08) 0%, rgba(49, 130, 206, 0.08) 100%) !important;
+        border-left: 5px solid #3b82f6 !important;
+        background: linear-gradient(135deg, rgba(59, 130, 246, 0.05), rgba(147, 197, 253, 0.05)) !important;
     }
     
     .extrovert-card {
-        border-left: 6px solid #ed8936 !important;
-        background: linear-gradient(135deg, rgba(237, 137, 54, 0.08) 0%, rgba(221, 107, 32, 0.08) 100%) !important;
+        border-left: 5px solid #ef4444 !important;
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.05), rgba(252, 165, 165, 0.05)) !important;
     }
     
     .ambivert-card {
-        border-left: 6px solid #9f7aea !important;
-        background: linear-gradient(135deg, rgba(159, 122, 234, 0.08) 0%, rgba(128, 90, 213, 0.08) 100%) !important;
+        border-left: 5px solid #8b5cf6 !important;
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(196, 181, 253, 0.05)) !important;
     }
     
-    /* Tabs styling */
-    .stTabs > div > div > div > div {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-radius: 12px 12px 0 0 !important;
-        border-bottom: 3px solid transparent !important;
-    }
-    
-    .stTabs > div > div > div > div[aria-selected="true"] {
-        background: rgba(255, 255, 255, 0.95) !important;
-        border-bottom-color: #4299e1 !important;
-        color: #4299e1 !important;
-        font-weight: 600 !important;
-    }
-    
-    /* Expander styling */
-    .streamlit-expanderHeader {
-        background: rgba(255, 255, 255, 0.9) !important;
-        border-radius: 12px !important;
+    /* Form styling */
+    .stForm {
+        background: rgba(255, 255, 255, 0.8) !important;
+        padding: 2rem !important;
+        border-radius: 16px !important;
         border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        margin: 0.5rem 0 !important;
+        backdrop-filter: blur(10px) !important;
     }
     
-    .streamlit-expanderContent {
-        background: rgba(255, 255, 255, 0.95) !important;
-        border-radius: 0 0 12px 12px !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        border-top: none !important;
-    }
-    
-    /* Plotly charts container */
-    .js-plotly-plot {
+    /* Alert styling */ 
+    .stAlert {
         border-radius: 12px !important;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1) !important;
+        border: none !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
     }
     
-    /* General text color fixes */
-    p, div, span {
-        color: #2d3748 !important;
+    /* Text elements */
+    .stMarkdown, .stText {
+        color: #374151 !important;
     }
     
-    /* Caption styling */
-    .stCaption {
-        color: #718096 !important;
-        font-size: 14px !important;
-    }
-    
-    /* Markdown content */
-    .stMarkdown {
-        color: #2d3748 !important;
-    }
-    
-    /* Progress bar */
-    .stProgress > div > div > div > div {
-        background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%) !important;
-    }
-    
-    /* Checkbox styling */
-    .stCheckbox > label > div {
+    /* Metrics */
+    .metric-container {
         background: rgba(255, 255, 255, 0.9) !important;
+        padding: 1.5rem !important;
+        border-radius: 12px !important;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+        text-align: center !important;
+    }
         border-radius: 8px !important;
         padding: 0.5rem !important;
     }
