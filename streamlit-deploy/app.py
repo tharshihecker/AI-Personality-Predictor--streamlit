@@ -203,12 +203,18 @@ st.markdown("""
         text-align: center;
     }
 
-    /* Prevent any button from showing pure black backgrounds */
+    /* Ensure buttons are visible and clickable */
     .stButton button {
-        background-image: none !important;
-        background-color: transparent !important;
-        border: 2px solid transparent !important;
-        padding: 10px 18px !important;
+        background: linear-gradient(135deg, #34d399, #10b981) !important;
+        color: #000000 !important;
+        border: none !important;
+        border-radius: 10px !important;
+        padding: 10px 16px !important;
+        font-weight: 600 !important;
+        cursor: pointer !important;
+        pointer-events: auto !important;
+        z-index: 5 !important;
+        box-shadow: 0 4px 10px rgba(16,185,129,0.12) !important;
     }
     
     .introvert-card {
@@ -224,6 +230,56 @@ st.markdown("""
     .ambivert-card {
         border-left: 5px solid #8b5cf6 !important;
         background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(196, 181, 253, 0.05)) !important;
+    }
+
+    /* Strong overrides for auth forms and inputs to ensure visibility */
+    .stForm, .stForm * {
+        color: #000000 !important;
+        background-color: transparent !important;
+    }
+
+    .stTextInput input, .stTextArea textarea, .stSelectbox select {
+        color: #000000 !important;
+        background: #ffffff !important;
+        border: 1px solid rgba(15,23,42,0.08) !important;
+    }
+
+    .stTextInput input::placeholder, .stTextArea textarea::placeholder,
+    .stTextInput input::-webkit-input-placeholder, .stTextArea textarea::-webkit-input-placeholder,
+    .stTextInput input:-ms-input-placeholder, .stTextArea textarea:-ms-input-placeholder {
+        color: #6b7280 !important;
+        opacity: 1 !important;
+    }
+
+    /* FORCE ALL BUTTONS TO BE VISIBLE AND CLICKABLE */
+    .stButton button, .stButton > button, button[kind="primary"], button[kind="secondary"] {
+        pointer-events: auto !important;
+        z-index: 99999 !important;
+        background-color: #ff4444 !important;
+        color: white !important;
+        border: 3px solid #cc0000 !important;
+        border-radius: 12px !important;
+        padding: 12px 24px !important;
+        font-weight: 800 !important;
+        font-size: 16px !important;
+        text-transform: uppercase !important;
+        cursor: pointer !important;
+        position: relative !important;
+        display: block !important;
+        width: 100% !important;
+        min-height: 50px !important;
+        transition: all 0.3s !important;
+    }
+    
+    .stButton button:hover, .stButton > button:hover, button[kind="primary"]:hover, button[kind="secondary"]:hover {
+        background-color: #ff0000 !important;
+        transform: scale(1.05) !important;
+        box-shadow: 0 8px 16px rgba(255, 68, 68, 0.5) !important;
+    }
+    
+    .stButton button:active, .stButton > button:active {
+        background-color: #990000 !important;
+        transform: scale(0.95) !important;
     }
 
     /* Warm light card backgrounds for sections */
@@ -563,8 +619,9 @@ def show_dashboard():
     default = st.session_state.get('nav_override', None)
     if default and default in options:
         page = st.sidebar.selectbox("Go to:", options, index=options.index(default), key="nav_select")
-        # clear override after use
-        st.session_state.pop('nav_override', None)
+        # clear override after use - but after page navigation
+        if st.session_state.get('nav_override') == page:
+            st.session_state.pop('nav_override', None)
     else:
         page = st.sidebar.selectbox("Go to:", options, key="nav_select")
     
@@ -588,9 +645,10 @@ def show_dashboard_content():
     """Show dashboard content"""
     col1, col2, col3 = st.columns(3)
     
-    # Get user stats
+    # Get user stats - force fresh database connection
     db = init_connection()
     if db is not None:
+        # Clear any cached results and get fresh data
         history_result = get_user_history(db, st.session_state.user["_id"])
         if history_result["success"]:
             tests = history_result["tests"]
@@ -630,15 +688,55 @@ def show_dashboard_content():
                         with col1:
                             st.write(f"**Confidence:** {test['confidence']:.1%}")
                         with col2:
-                            if st.button(f"View Details", key=f"view_{str(test['_id'])}"):
-                                st.session_state.selected_test = test
-                                st.session_state.page = 'test_details'
-                                st.rerun()
+                            details_key = f"view_{str(test['_id'])}"
+                            if st.button(f"👁️ View Details", key=details_key, use_container_width=True):
+                                st.balloons()
+                                st.success("✅ VIEW DETAILS CLICKED!")
+                                
+                                # Show details immediately here
+                                st.write("---")
+                                st.subheader(f"🔍 Details for {test['prediction']}")
+                                
+                                col1, col2 = st.columns(2)
+                                with col1:
+                                    st.metric("Type", test['prediction'])
+                                    st.metric("Confidence", f"{test['confidence']:.1%}")
+                                    
+                                with col2:
+                                    st.write("**Probabilities:**")
+                                    for personality, prob in test['probabilities'].items():
+                                        st.write(f"• {personality}: {prob:.1%}")
+                                
+                                # Show charts
+                                st.write("**📊 Charts:**")
+                                chart_col1, chart_col2 = st.columns(2)
+                                
+                                with chart_col1:
+                                    # Pie chart
+                                    import plotly.express as px
+                                    prob_data = pd.DataFrame(
+                                        list(test['probabilities'].items()),
+                                        columns=['Personality', 'Probability']
+                                    )
+                                    fig_pie = px.pie(prob_data, values='Probability', names='Personality',
+                                                   title="Distribution")
+                                    fig_pie.update_traces(textfont_color='black')
+                                    fig_pie.update_layout(font_color='black')
+                                    st.plotly_chart(fig_pie, use_container_width=True)
+                                
+                                with chart_col2:
+                                    # Bar chart
+                                    fig_bar = px.bar(prob_data, x='Personality', y='Probability',
+                                                   title="Scores")
+                                    fig_bar.update_traces(textfont_color='black')
+                                    fig_bar.update_layout(font_color='black',
+                                                        xaxis_title="Type",
+                                                        yaxis_title="Probability")
+                                    st.plotly_chart(fig_bar, use_container_width=True)
+                                
+                                st.write("---")
             else:
-                st.info("No tests taken yet. Take your first personality test!")
-                if st.button("Take Your First Test"):
-                    st.session_state.page = 'test'
-                    st.rerun()
+                st.info("📝 **Instructions:** Please use the sidebar navigation and select **'Take Test'** to complete your first personality assessment!")
 
 def show_personality_test():
     """Show personality test interface"""
@@ -674,13 +772,14 @@ def show_personality_test():
                 with c2:
                     st.markdown(f"**{feature_display}**", unsafe_allow_html=True)
                     responses[feature] = st.slider(
-                        "",
+                        label=f"slider_{feature}",
                         min_value=0.0,
                         max_value=10.0,
                         value=5.0,
                         step=0.1,
                         help=description,
-                        key=f"slider_{feature}"
+                        key=f"slider_{feature}",
+                        label_visibility='collapsed'
                     )
                     st.caption(description)
                     st.markdown("---")
@@ -739,7 +838,7 @@ def show_test_results(prediction, confidence, probabilities):
     advice = PERSONALITY_ADVICE.get(prediction, {})
     
     # Main result card
-    st.success("Test completed successfully!")
+    st.success("✅ Test completed successfully!")
     
     # Result display
     col1, col2 = st.columns([2, 1])
@@ -815,23 +914,39 @@ def show_test_results(prediction, confidence, probabilities):
             st.write(f"• {tip}")
     
     # Action buttons
+    st.write("---")
     col1, col2, col3 = st.columns(3)
+    
+    # Action buttons with immediate navigation
+    col1, col2, col3 = st.columns([1, 1, 1])
+    
     with col1:
-        if st.button("🔄 Take Another Test"):
-            # Clear latest result and flag then go back to test
+        if st.button("🔄 Take Another Test", key="take_another_test_btn", use_container_width=True):
+            st.balloons()
+            st.success("✅ TAKE ANOTHER TEST CLICKED!")
             st.session_state.pop('latest_result', None)
             st.session_state.pop('show_results', None)
-            st.session_state.page = 'test'
+            st.session_state.nav_override = 'Take Test'
             st.rerun()
-    with col2:
-        if st.button("📊 View History", key="result_view_history"):
-            # Set nav override so dashboard routing shows Test History
-            st.session_state.nav_override = 'Test History'
-            st.experimental_rerun()
-    with col3:
-        if st.button("🏠 Go to Dashboard", key="result_go_dashboard"):
-            st.session_state.nav_override = 'Dashboard'
-            st.experimental_rerun()
+    
+    # Hidden buttons - commented out
+    # with col2:
+    #     if st.button("📊 View History", key="result_view_history", use_container_width=True):
+    #         st.balloons()
+    #         st.success("✅ VIEW HISTORY CLICKED!")
+    #         st.session_state.pop('latest_result', None)
+    #         st.session_state.pop('show_results', None)
+    #         st.session_state.nav_override = 'Test History'
+    #         st.rerun()
+    # 
+    # with col3:
+    #     if st.button("🏠 Go to Dashboard", key="result_go_dashboard", use_container_width=True):
+    #         st.balloons()
+    #         st.success("✅ GO TO DASHBOARD CLICKED!")
+    #         st.session_state.pop('latest_result', None)
+    #         st.session_state.pop('show_results', None)
+    #         st.session_state.nav_override = 'Dashboard'
+    #         st.rerun()
 
 def show_test_history():
     """Show test history"""
@@ -861,7 +976,7 @@ def show_test_history():
                                     st.success("All history removed")
                                     # Clear session and reload
                                     st.session_state.pop('confirm_delete_history', None)
-                                    st.experimental_rerun()
+                                    st.rerun()
                                 except Exception as e:
                                     st.error(f"Failed to delete history: {e}")
                             else:
@@ -898,21 +1013,62 @@ def show_test_history():
                             for personality, prob in test['probabilities'].items():
                                 st.write(f"• {personality}: {prob:.1%}")
                         
-                        if st.button(f"View Full Results", key=f"view_full_{str(test['_id'])}"):
-                            # Render full results (ensure time offset for display inside show_test_results is handled there)
-                            st.session_state.latest_result = {
-                                'prediction': test['prediction'],
-                                'confidence': test['confidence'],
-                                'probabilities': test['probabilities'],
-                                'features': test.get('features', {})
-                            }
-                            st.session_state.show_results = True
-                            st.rerun()
+                        view_full_key = f"view_full_{str(test['_id'])}"
+                        if st.button(f"📋 View Full Results", key=view_full_key, use_container_width=True):
+                            st.balloons()
+                            st.success("✅ VIEW FULL RESULTS CLICKED!")
+                            
+                            # Immediately show the result here in this page
+                            st.write("---")
+                            st.subheader(f"🎯 Full Results for {test['prediction']}")
+                            
+                            col1, col2 = st.columns(2)
+                            with col1:
+                                st.metric("Personality Type", test['prediction'])
+                                st.metric("Confidence", f"{test['confidence']:.1%}")
+                            
+                            with col2:
+                                st.write("**All Probabilities:**")
+                                for personality, prob in test['probabilities'].items():
+                                    st.write(f"• **{personality}**: {prob:.1%}")
+                            
+                            # Show charts
+                            st.write("**📊 Visual Analysis:**")
+                            chart_col1, chart_col2 = st.columns(2)
+                            
+                            with chart_col1:
+                                # Pie chart
+                                import plotly.express as px
+                                prob_data = pd.DataFrame(
+                                    list(test['probabilities'].items()),
+                                    columns=['Personality', 'Probability']
+                                )
+                                fig_pie = px.pie(prob_data, values='Probability', names='Personality',
+                                               title="Personality Distribution")
+                                fig_pie.update_traces(textfont_color='black')
+                                fig_pie.update_layout(font_color='black')
+                                st.plotly_chart(fig_pie, use_container_width=True)
+                            
+                            with chart_col2:
+                                # Bar chart
+                                fig_bar = px.bar(prob_data, x='Personality', y='Probability',
+                                               title="Probability Scores")
+                                fig_bar.update_traces(textfont_color='black')
+                                fig_bar.update_layout(font_color='black', 
+                                                    xaxis_title="Personality Type",
+                                                    yaxis_title="Probability")
+                                st.plotly_chart(fig_bar, use_container_width=True)
+                            
+                            # Show advice if available
+                            advice = PERSONALITY_ADVICE.get(test['prediction'], {})
+                            if advice:
+                                st.write("**💡 Advice:**")
+                                for tip in advice.get('advice', []):
+                                    st.write(f"• {tip}")
+                            
+                            st.write("---")
             else:
-                st.info("No tests completed yet.")
-                if st.button("Take Your First Test"):
-                    st.session_state.page = 'test'
-                    st.rerun()
+                st.info("📝 **Instructions:** Please use the sidebar navigation and select **'Take Test'** to complete your first personality assessment!")
         else:
             st.error("Failed to load test history")
     else:
@@ -924,19 +1080,14 @@ def show_profile():
     
     user = st.session_state.user
     
-    col1, col2 = st.columns([1, 2])
-    
-    with col1:
-        st.image("https://via.placeholder.com/150", caption="Profile Picture", width=150)
-    
-    with col2:
-        st.write("**Name:**", user["name"])
-        st.write("**Email:**", user["email"])
-        try:
-            member_since = (user['created_at'] + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d')
-        except Exception:
-            member_since = str(user.get('created_at'))
-        st.write("**Member Since:**", member_since + " (+05:30)")
+    # User info (no profile picture)
+    st.write("**Name:**", user["name"])
+    st.write("**Email:**", user["email"])
+    try:
+        member_since = (user['created_at'] + timedelta(hours=5, minutes=30)).strftime('%Y-%m-%d')
+    except Exception:
+        member_since = str(user.get('created_at'))
+    st.write("**Member Since:**", member_since + " (+05:30)")
     
     # User statistics
     st.subheader("📈 Your Statistics")
@@ -970,13 +1121,17 @@ def show_profile():
                 st.subheader("🎭 Personality Type Distribution")
 
                 if personality_counts:
-                    # Show breakdown counts and percentages
+                    # Show breakdown counts and percentages in compact table
                     total = sum(personality_counts.values())
                     pct_table = pd.DataFrame([
-                        {"Personality": k, "Count": v, "Percent": f"{v/total:.1%}"}
+                        {"Type": k, "Count": v, "Percent": f"{v/total:.1%}"}
                         for k, v in personality_counts.items()
                     ])
-                    st.table(pct_table)
+                    
+                    # Display table in smaller columns
+                    col1, col2, col3 = st.columns([1, 1, 2])
+                    with col1:
+                        st.dataframe(pct_table, use_container_width=True, hide_index=True)
 
                     fig = px.bar(
                         x=list(personality_counts.keys()),
@@ -993,23 +1148,28 @@ def show_profile():
                         xaxis_title="Personality Type",
                         yaxis_title="Number of Tests",
                         showlegend=False,
-                        font=dict(size=14, color='#0f172a'),
-                        title_font=dict(size=18, color='#0b1220'),
+                        font=dict(size=14, color='#000000'),
+                        title_font=dict(size=18, color='#000000'),
                         paper_bgcolor='rgba(0,0,0,0)',
                         plot_bgcolor='rgba(0,0,0,0)',
                         xaxis=dict(
-                            gridcolor='rgba(128,128,128,0.08)',
-                            linecolor='rgba(15,23,42,0.08)'
+                            gridcolor='rgba(0,0,0,0.2)',
+                            linecolor='#000000',
+                            tickfont=dict(color='#000000'),
+                            title=dict(font=dict(color='#000000'))
                         ),
                         yaxis=dict(
-                            gridcolor='rgba(128,128,128,0.08)',
-                            linecolor='rgba(15,23,42,0.08)'
+                            gridcolor='rgba(0,0,0,0.2)',
+                            linecolor='#000000',
+                            tickfont=dict(color='#000000'),
+                            title=dict(font=dict(color='#000000'))
                         )
                     )
                     fig.update_traces(
-                        marker=dict(line=dict(color='#0f172a', width=1)),
+                        marker=dict(line=dict(color='#000000', width=1)),
                         text=[f"{v}" for v in list(personality_counts.values())],
-                        textposition='outside'
+                        textposition='outside',
+                        textfont=dict(color='#000000')
                     )
                     st.plotly_chart(fig, use_container_width=True)
                 
@@ -1034,17 +1194,21 @@ def show_profile():
                     fig.update_layout(
                         xaxis_title="Date (+05:30)",
                         yaxis_title="Confidence",
-                        font=dict(size=14, color='#0f172a'),
-                        title_font=dict(size=18, color='#0b1220'),
+                        font=dict(size=14, color='#000000'),
+                        title_font=dict(size=18, color='#000000'),
                         paper_bgcolor='rgba(0,0,0,0)',
                         plot_bgcolor='rgba(0,0,0,0)',
                         xaxis=dict(
-                            gridcolor='rgba(128,128,128,0.08)',
-                            linecolor='rgba(15,23,42,0.08)'
+                            gridcolor='rgba(0,0,0,0.2)',
+                            linecolor='#000000',
+                            tickfont=dict(color='#000000'),
+                            title=dict(font=dict(color='#000000'))
                         ),
                         yaxis=dict(
-                            gridcolor='rgba(128,128,128,0.08)',
-                            linecolor='rgba(15,23,42,0.08)'
+                            gridcolor='rgba(0,0,0,0.2)',
+                            linecolor='#000000',
+                            tickfont=dict(color='#000000'),
+                            title=dict(font=dict(color='#000000'))
                         )
                     )
                     fig.update_traces(
