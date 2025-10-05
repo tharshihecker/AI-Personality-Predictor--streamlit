@@ -20,6 +20,115 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Custom CSS for better UI
+st.markdown("""
+<style>
+    /* Reduce input field sizes */
+    .stTextInput > div > div > input {
+        height: 45px;
+        font-size: 16px;
+        padding: 8px 12px;
+    }
+    
+    .stTextArea > div > div > textarea {
+        min-height: 80px;
+        font-size: 16px;
+        padding: 8px 12px;
+    }
+    
+    /* Better form styling */
+    .stForm {
+        background: white;
+        padding: 2rem;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        border: 1px solid #e0e0e0;
+    }
+    
+    /* Button improvements */
+    .stButton > button {
+        height: 45px;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    
+    /* Slider improvements */
+    .stSlider > div > div > div > div {
+        height: 6px;
+        border-radius: 3px;
+    }
+    
+    /* Card-like containers */
+    .element-container {
+        margin-bottom: 1rem;
+    }
+    
+    /* Header styling */
+    .main > div > div > div > div > h1 {
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #f0f0f0;
+        margin-bottom: 2rem;
+    }
+    
+    /* Metrics styling */
+    .metric-container {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 1.5rem;
+        border-radius: 12px;
+        text-align: center;
+        margin: 0.5rem 0;
+    }
+    
+    /* Success/Error message styling */
+    .stSuccess, .stError, .stWarning, .stInfo {
+        border-radius: 8px;
+        border-left: 4px solid;
+        padding: 12px 16px;
+        margin: 1rem 0;
+    }
+    
+    /* Sidebar improvements */
+    .css-1d391kg {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    /* Remove extra padding */
+    .block-container {
+        padding-top: 2rem;
+        padding-bottom: 2rem;
+    }
+    
+    /* Tab styling */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 8px;
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        height: 50px;
+        padding: 8px 24px;
+        border-radius: 8px;
+        font-weight: 600;
+    }
+    
+    /* Expander styling */
+    .streamlit-expanderHeader {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 12px;
+        font-weight: 600;
+    }
+</style>
+""", unsafe_allow_html=True)
+
 # MongoDB Atlas connection
 @st.cache_resource
 def init_connection():
@@ -217,7 +326,7 @@ def show_auth_page():
             if login_btn:
                 if email and password:
                     db = init_connection()
-                    if db:
+                    if db is not None:
                         result = authenticate_user(db, email, password)
                         if result["success"]:
                             st.session_state.authenticated = True
@@ -248,7 +357,7 @@ def show_auth_page():
                         st.error("Password must be at least 6 characters long")
                     else:
                         db = init_connection()
-                        if db:
+                        if db is not None:
                             result = create_user(db, name, email, password)
                             if result["success"]:
                                 st.success("Account created successfully! Please login.")
@@ -294,7 +403,7 @@ def show_dashboard_content():
     
     # Get user stats
     db = init_connection()
-    if db:
+    if db is not None:
         history_result = get_user_history(db, st.session_state.user["_id"])
         if history_result["success"]:
             tests = history_result["tests"]
@@ -395,7 +504,7 @@ def show_personality_test():
             
             # Save to database
             db = init_connection()
-            if db:
+            if db is not None:
                 save_result = save_test_result(
                     db, 
                     st.session_state.user["_id"], 
@@ -501,7 +610,7 @@ def show_test_history():
     st.title("📊 Test History")
     
     db = init_connection()
-    if db:
+    if db is not None:
         history_result = get_user_history(db, st.session_state.user["_id"])
         
         if history_result["success"]:
@@ -560,7 +669,7 @@ def show_profile():
     st.subheader("📈 Your Statistics")
     
     db = init_connection()
-    if db:
+    if db is not None:
         history_result = get_user_history(db, user["_id"])
         
         if history_result["success"]:
