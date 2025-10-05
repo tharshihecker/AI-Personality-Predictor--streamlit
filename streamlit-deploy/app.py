@@ -20,113 +20,85 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Custom CSS for better UI
+# Clean CSS Design
 st.markdown("""
 <style>
-    /* Reduce input field sizes */
+    /* Main app background - clean white */
+    .stApp {
+        background-color: white;
+    }
+    
+    /* Input fields */
     .stTextInput > div > div > input {
-        height: 45px;
+        height: 40px;
+        border: 2px solid #ddd;
+        border-radius: 6px;
         font-size: 16px;
-        padding: 8px 12px;
     }
     
-    .stTextArea > div > div > textarea {
-        min-height: 80px;
-        font-size: 16px;
-        padding: 8px 12px;
-    }
-    
-    /* Better form styling */
+    /* Forms */
     .stForm {
         background: white;
-        padding: 2rem;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        border: 1px solid #e0e0e0;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        border: 1px solid #eee;
     }
     
-    /* Button improvements */
+    /* Buttons */
     .stButton > button {
-        height: 45px;
-        border-radius: 8px;
+        background: #007acc;
+        color: white;
         border: none;
-        font-weight: 600;
-        font-size: 16px;
-        transition: all 0.3s ease;
+        border-radius: 6px;
+        padding: 10px 20px;
+        font-weight: bold;
     }
     
     .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        background: #005c99;
     }
     
-    /* Slider improvements */
-    .stSlider > div > div > div > div {
-        height: 6px;
-        border-radius: 3px;
+    /* Success messages */
+    .stSuccess {
+        background: #d4edda;
+        color: #155724;
+        border-left: 4px solid #28a745;
     }
     
-    /* Card-like containers */
-    .element-container {
-        margin-bottom: 1rem;
+    /* Error messages */
+    .stError {
+        background: #f8d7da;
+        color: #721c24;
+        border-left: 4px solid #dc3545;
     }
     
-    /* Header styling */
-    .main > div > div > div > div > h1 {
-        padding-bottom: 1rem;
-        border-bottom: 2px solid #f0f0f0;
-        margin-bottom: 2rem;
+    /* Sliders */
+    .stSlider > div > div > div {
+        background: #007acc;
     }
     
-    /* Metrics styling */
-    .metric-container {
-        background: linear-gradient(135deg, #f8f9ff 0%, #e8f2ff 100%);
-        color: #2c3e50;
-        padding: 1.5rem;
-        border-radius: 12px;
-        text-align: center;
-        margin: 0.5rem 0;
-        border: 1px solid #d1e7dd;
+    /* Personality cards */
+    .personality-card {
+        padding: 20px;
+        border-radius: 10px;
+        margin: 10px 0;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     
-    /* Success/Error message styling */
-    .stSuccess, .stError, .stWarning, .stInfo {
-        border-radius: 8px;
-        border-left: 4px solid;
-        padding: 12px 16px;
-        margin: 1rem 0;
+    .introvert-card {
+        background: #e3f2fd;
+        border-left: 5px solid #2196f3;
     }
     
-    /* Sidebar improvements */
-    .css-1d391kg {
-        background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
-        border-right: 1px solid #e0e0e0;
+    .extrovert-card {
+        background: #fff3e0;
+        border-left: 5px solid #ff9800;
     }
     
-    /* Remove extra padding */
-    .block-container {
-        padding-top: 2rem;
-        padding-bottom: 2rem;
-    }
-    
-    /* Tab styling */
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 8px;
-    }
-    
-    .stTabs [data-baseweb="tab"] {
-        height: 50px;
-        padding: 8px 24px;
-        border-radius: 8px;
-        font-weight: 600;
-    }
-    
-    /* Expander styling */
-    .streamlit-expanderHeader {
-        background: #f8f9fa;
-        border-radius: 8px;
-        padding: 12px;
-        font-weight: 600;
+    .ambivert-card {
+        background: #f3e5f5;
+        border-left: 5px solid #9c27b0;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -551,14 +523,14 @@ def show_test_results(prediction, confidence, probabilities):
     col1, col2 = st.columns([2, 1])
     
     with col1:
+        # Personality result card
+        card_class = f"{prediction.lower()}-card"
         st.markdown(f"""
-        <div style="background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%); 
-                    color: #2c3e50; padding: 2rem; border-radius: 1rem; text-align: center; margin: 1rem 0;
-                    border: 2px solid {advice.get('color', '#007acc')}; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-            <h1 style="margin: 0; font-size: 3rem;">{advice.get('icon', '❓')}</h1>
-            <h2 style="margin: 0.5rem 0; color: {advice.get('color', '#007acc')};">{prediction}</h2>
-            <h3 style="margin: 0; color: #495057;">{confidence:.1%} Confidence</h3>
-            <p style="margin: 1rem 0; color: #6c757d;">{advice.get('description', '')}</p>
+        <div class="personality-card {card_class}">
+            <h1 style="text-align: center; font-size: 3rem; margin: 0;">{advice.get('icon', '❓')}</h1>
+            <h2 style="text-align: center; color: #333; margin: 10px 0;">{prediction}</h2>
+            <h3 style="text-align: center; color: #666;">{confidence:.1%} Confidence</h3>
+            <p style="text-align: center; color: #555; margin: 15px 0;">{advice.get('description', '')}</p>
         </div>
         """, unsafe_allow_html=True)
     
@@ -592,10 +564,8 @@ def show_test_results(prediction, confidence, probabilities):
             st.write(f"• {strength}")
         
         st.subheader("🎯 Career Suggestions")
-        career_cols = st.columns(3)
-        for i, career in enumerate(advice.get('career_suggestions', [])):
-            with career_cols[i % 3]:
-                st.button(career, disabled=True, key=f"career_{i}")
+        for career in advice.get('career_suggestions', []):
+            st.write(f"• {career}")
     
     with col2:
         st.subheader("💡 Personal Development Advice")
@@ -750,21 +720,7 @@ def main():
     """Main application logic"""
     init_session_state()
     
-    # Custom CSS
-    st.markdown("""
-    <style>
-    .stApp {
-        background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-    }
-    .stTabs [data-baseweb="tab-list"] {
-        gap: 2px;
-    }
-    .stTabs [data-baseweb="tab"] {
-        padding-left: 20px;
-        padding-right: 20px;
-    }
-    </style>
-    """, unsafe_allow_html=True)
+
     
     # Route based on authentication status
     if not st.session_state.authenticated:
