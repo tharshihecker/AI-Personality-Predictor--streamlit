@@ -42,10 +42,39 @@ st.markdown("""
         padding-bottom: 2rem;
         max-width: 1200px;
     }
+    /* Center content and reduce max width for better centering */
+    .main .block-container .stMarkdown, .main .block-container .stTitle {
+        margin-left: auto !important;
+        margin-right: auto !important;
+        max-width: 900px !important;
+    }
     
     /* Titles & headings */
-    h1, h2, h3 {
-        color: #111827 !important;
+    :root{
+        --primary:#0f172a;
+        --accent-1:#0ea5a4; /* teal */
+        --accent-2:#7c3aed; /* violet */
+        --muted:#64748b;
+        --card:#ffffff;
+    }
+
+    h1 {
+        color: var(--primary) !important;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        text-align: center;
+        background: linear-gradient(90deg, var(--accent-1), var(--accent-2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    h2 {
+        color: var(--accent-1) !important; /* colored headings */
+        font-weight: 700;
+    }
+
+    h3 {
+        color: var(--accent-2) !important;
         font-weight: 700;
     }
     
@@ -58,15 +87,24 @@ st.markdown("""
         padding: 1.5rem;
     }
     
-    /* Input fields */
+    /* Input fields (softer, warmer and lower visual intensity) */
     .stTextInput input, .stTextArea textarea, .stSelectbox select {
-        background: #f8fafc !important; /* light background but not pure white */
+        background: #fcfbf9 !important; /* warm light */
         color: #0f172a !important; /* dark text for visibility */
-        border: 1px solid #d1d5db !important;
-        border-radius: 8px !important;
-        padding: 12px 16px !important;
-        font-size: 16px !important;
-        transition: all 0.3s ease !important;
+        border: 1px solid rgba(15,23,42,0.06) !important;
+        border-radius: 10px !important;
+        padding: 10px 14px !important;
+        font-size: 15px !important;
+        transition: all 0.18s ease !important;
+        box-shadow: none !important;
+    }
+
+    /* Placeholder color so placeholders are visible */
+    .stTextInput input::placeholder, .stTextArea textarea::placeholder,
+    .stTextInput input::-webkit-input-placeholder, .stTextArea textarea::-webkit-input-placeholder,
+    .stTextInput input:-ms-input-placeholder, .stTextArea textarea:-ms-input-placeholder {
+        color: #475569 !important;
+        opacity: 1 !important;
     }
     
     .stTextInput input:focus, .stTextArea textarea:focus {
@@ -101,6 +139,11 @@ st.markdown("""
     .stButton button:hover {
         transform: translateY(-1px) !important;
         box-shadow: 0 8px 20px rgba(16, 185, 129, 0.22) !important;
+    }
+
+    /* Ensure metrics/cards use subtle colored accents */
+    .stMetric {
+        color: var(--primary) !important;
     }
     
     /* Success messages */
@@ -146,13 +189,24 @@ st.markdown("""
     
     /* Cards & results */
     .personality-card {
-        background: #ffffff !important;
+        background: var(--card) !important;
         backdrop-filter: blur(6px) !important;
         border-radius: 16px !important;
         padding: 2rem !important;
         margin: 1rem 0 !important;
         box-shadow: 0 8px 32px rgba(0, 0, 0, 0.06) !important;
         border: 1px solid rgba(15, 23, 42, 0.04) !important;
+    }
+    .personality-card h1, .personality-card h2 {
+        text-align: center;
+    }
+
+    /* Prevent any button from showing pure black backgrounds */
+    .stButton button {
+        background-image: none !important;
+        background-color: transparent !important;
+        border: 2px solid transparent !important;
+        padding: 10px 18px !important;
     }
     
     .introvert-card {
@@ -168,6 +222,41 @@ st.markdown("""
     .ambivert-card {
         border-left: 5px solid #8b5cf6 !important;
         background: linear-gradient(135deg, rgba(139, 92, 246, 0.05), rgba(196, 181, 253, 0.05)) !important;
+    }
+
+    /* Warm light card backgrounds for sections */
+    .warm-card {
+        background: linear-gradient(180deg, #fff7ed 0%, #fffbf7 100%) !important;
+        border: 1px solid rgba(249, 115, 22, 0.06) !important;
+    }
+
+    .muted-card {
+        background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%) !important;
+        border: 1px solid rgba(15, 23, 42, 0.03) !important;
+    }
+
+    /* Animated icon helper */
+    .icon-spin {
+        display:inline-block;
+        animation: spin 4s linear infinite;
+        transform-origin: center;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    /* Multi-color heading banner */
+    .multi-heading {
+        display:block;
+        text-align:center;
+        font-weight:800;
+        font-size:2.2rem;
+        margin: 6px 0 14px 0;
+        background: linear-gradient(90deg,#06b6d4,#7c3aed,#f97316,#ef4444);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
     }
     
     /* Form styling */
@@ -392,10 +481,18 @@ def init_session_state():
     if 'page' not in st.session_state:
         st.session_state.page = 'login'
 
+
+def render_heading(text: str, icon: str = ""):
+    """Render a stylized multi-color heading with optional animated icon"""
+    if icon:
+        st.markdown(f"<div class='multi-heading'>{icon} <span style='font-weight:800'>{text}</span></div>", unsafe_allow_html=True)
+    else:
+        st.markdown(f"<div class='multi-heading'>{text}</div>", unsafe_allow_html=True)
+
 # Authentication UI
 def show_auth_page():
     """Show login/signup page"""
-    st.title("🧠 Personality Test App")
+    render_heading("Personality Test App", "🧠")
     st.markdown("### Discover your personality type")
     
     tab1, tab2 = st.tabs(["Login", "Sign Up"])
@@ -455,7 +552,7 @@ def show_auth_page():
 # Dashboard
 def show_dashboard():
     """Show main dashboard"""
-    st.title(f"Welcome, {st.session_state.user['name']}! 👋")
+    render_heading(f"Welcome, {st.session_state.user['name']}!", "👋")
     
     # Sidebar navigation
     st.sidebar.title("Navigation")
@@ -539,7 +636,7 @@ def show_dashboard_content():
 
 def show_personality_test():
     """Show personality test interface"""
-    st.title("🧠 Personality Test")
+    render_heading("Personality Test", "🧠")
     st.markdown("Rate each aspect of your personality on a scale from 0 to 10")
     
     # Load models and features
@@ -727,7 +824,7 @@ def show_test_results(prediction, confidence, probabilities):
 
 def show_test_history():
     """Show test history"""
-    st.title("📊 Test History")
+    render_heading("Test History", "📊")
     
     db = init_connection()
     if db is not None:
@@ -738,6 +835,30 @@ def show_test_history():
             
             if tests:
                 st.write(f"Total tests completed: **{len(tests)}**")
+                if st.button("Remove All History"):
+                    st.session_state.confirm_delete_history = True
+
+                if st.session_state.get('confirm_delete_history'):
+                    st.warning("This action will permanently delete all your test history. This cannot be undone.")
+                    c1, c2 = st.columns([1,1])
+                    with c1:
+                        if st.button("Yes, delete all history", key="delete_history_yes"):
+                            db = init_connection()
+                            if db is not None:
+                                try:
+                                    db.personality_tests.delete_many({"user_id": ObjectId(st.session_state.user['_id'])})
+                                    st.success("All history removed")
+                                    # Clear session and reload
+                                    st.session_state.pop('confirm_delete_history', None)
+                                    st.experimental_rerun()
+                                except Exception as e:
+                                    st.error(f"Failed to delete history: {e}")
+                            else:
+                                st.error("Database connection failed")
+                    with c2:
+                        if st.button("Cancel", key="delete_history_cancel"):
+                            st.session_state.pop('confirm_delete_history', None)
+                            st.info("Deletion cancelled")
                 
                 # History table
                 for test in tests:
@@ -748,7 +869,7 @@ def show_test_history():
                     except Exception:
                         display_time = str(test.get('created_at'))
 
-                    with st.expander(f"{advice.get('icon', '❓')} {test['prediction']} - {display_time} - {test['confidence']:.1%} confidence (+05:30)"):
+                    with st.expander(f"{advice.get('icon', '❓')} {test['prediction']} - {display_time} — {test['confidence']:.1%} confidence"):
                         col1, col2 = st.columns(2)
                         
                         with col1:
@@ -788,7 +909,7 @@ def show_test_history():
 
 def show_profile():
     """Show user profile"""
-    st.title("👤 Profile")
+    render_heading("Profile", "👤")
     
     user = st.session_state.user
     
@@ -838,6 +959,14 @@ def show_profile():
                 st.subheader("🎭 Personality Type Distribution")
 
                 if personality_counts:
+                    # Show breakdown counts and percentages
+                    total = sum(personality_counts.values())
+                    pct_table = pd.DataFrame([
+                        {"Personality": k, "Count": v, "Percent": f"{v/total:.1%}"}
+                        for k, v in personality_counts.items()
+                    ])
+                    st.table(pct_table)
+
                     fig = px.bar(
                         x=list(personality_counts.keys()),
                         y=list(personality_counts.values()),
@@ -867,7 +996,9 @@ def show_profile():
                         )
                     )
                     fig.update_traces(
-                        marker=dict(line=dict(color='#0f172a', width=1))
+                        marker=dict(line=dict(color='#0f172a', width=1)),
+                        text=[f"{v}" for v in list(personality_counts.values())],
+                        textposition='outside'
                     )
                     st.plotly_chart(fig, use_container_width=True)
                 
