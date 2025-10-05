@@ -92,10 +92,12 @@ st.markdown("""
         background: #fcfbf9 !important; /* warm light */
         color: #0f172a !important; /* dark text for visibility */
         border: 1px solid rgba(15,23,42,0.06) !important;
-        border-radius: 10px !important;
-        padding: 10px 14px !important;
-        font-size: 15px !important;
-        transition: all 0.18s ease !important;
+        border-radius: 8px !important;
+        padding: 8px 12px !important;
+        height: 40px !important;
+        line-height: 1.2 !important;
+        font-size: 14px !important;
+        transition: all 0.12s ease !important;
         box-shadow: none !important;
     }
 
@@ -116,12 +118,12 @@ st.markdown("""
     /* Form containers */
     .stForm {
         background: rgba(255, 255, 255, 0.95) !important;
-        backdrop-filter: blur(10px);
-        padding: 2rem !important;
-        border-radius: 20px !important;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.1) !important;
-        border: 1px solid rgba(255, 255, 255, 0.2) !important;
-        margin: 1rem 0 !important;
+        backdrop-filter: blur(6px);
+        padding: 1rem !important;
+        border-radius: 14px !important;
+        box-shadow: 0 6px 20px rgba(0,0,0,0.06) !important;
+        border: 1px solid rgba(255, 255, 255, 0.12) !important;
+        margin: 0.75rem 0 !important;
     }
     
     /* Button styling */
@@ -556,11 +558,15 @@ def show_dashboard():
     
     # Sidebar navigation
     st.sidebar.title("Navigation")
-    page = st.sidebar.selectbox(
-        "Go to:",
-        ["Dashboard", "Take Test", "Test History", "Profile"],
-        key="nav_select"
-    )
+    # Use nav_override when set by buttons elsewhere (results/history)
+    options = ["Dashboard", "Take Test", "Test History", "Profile"]
+    default = st.session_state.get('nav_override', None)
+    if default and default in options:
+        page = st.sidebar.selectbox("Go to:", options, index=options.index(default), key="nav_select")
+        # clear override after use
+        st.session_state.pop('nav_override', None)
+    else:
+        page = st.sidebar.selectbox("Go to:", options, key="nav_select")
     
     if st.sidebar.button("Logout"):
         st.session_state.authenticated = False
@@ -624,7 +630,7 @@ def show_dashboard_content():
                         with col1:
                             st.write(f"**Confidence:** {test['confidence']:.1%}")
                         with col2:
-                            if st.button(f"View Details", key=f"view_{test['_id']}"):
+                            if st.button(f"View Details", key=f"view_{str(test['_id'])}"):
                                 st.session_state.selected_test = test
                                 st.session_state.page = 'test_details'
                                 st.rerun()
@@ -657,23 +663,27 @@ def show_personality_test():
     with st.form("personality_test"):
         responses = {}
         
-        # Create sliders for each feature
+        # Create sliders for each feature (centered)
         for i, feature in enumerate(feature_names):
             feature_display = feature.replace('_', ' ').title()
             description = FEATURE_DESCRIPTIONS.get(feature, f"Rate your {feature.replace('_', ' ')}")
-            
-            responses[feature] = st.slider(
-                f"**{feature_display}**",
-                min_value=0.0,
-                max_value=10.0,
-                value=5.0,
-                step=0.1,
-                help=description,
-                key=f"slider_{feature}"
-            )
-            
-            st.caption(description)
-            st.markdown("---")
+
+            # Center each question and slider
+            with st.container():
+                c1, c2, c3 = st.columns([1, 8, 1])
+                with c2:
+                    st.markdown(f"**{feature_display}**", unsafe_allow_html=True)
+                    responses[feature] = st.slider(
+                        "",
+                        min_value=0.0,
+                        max_value=10.0,
+                        value=5.0,
+                        step=0.1,
+                        help=description,
+                        key=f"slider_{feature}"
+                    )
+                    st.caption(description)
+                    st.markdown("---")
         
         # Submit button
         submit_btn = st.form_submit_button("🎯 Get My Personality Result", use_container_width=True)
@@ -814,13 +824,14 @@ def show_test_results(prediction, confidence, probabilities):
             st.session_state.page = 'test'
             st.rerun()
     with col2:
-        if st.button("📊 View History"):
-            st.session_state.page = 'history'
-            st.rerun()
+        if st.button("📊 View History", key="result_view_history"):
+            # Set nav override so dashboard routing shows Test History
+            st.session_state.nav_override = 'Test History'
+            st.experimental_rerun()
     with col3:
-        if st.button("🏠 Go to Dashboard"):
-            st.session_state.page = 'dashboard'
-            st.rerun()
+        if st.button("🏠 Go to Dashboard", key="result_go_dashboard"):
+            st.session_state.nav_override = 'Dashboard'
+            st.experimental_rerun()
 
 def show_test_history():
     """Show test history"""
@@ -887,7 +898,7 @@ def show_test_history():
                             for personality, prob in test['probabilities'].items():
                                 st.write(f"• {personality}: {prob:.1%}")
                         
-                        if st.button(f"View Full Results", key=f"view_full_{test['_id']}"):
+                        if st.button(f"View Full Results", key=f"view_full_{str(test['_id'])}"):
                             # Render full results (ensure time offset for display inside show_test_results is handled there)
                             st.session_state.latest_result = {
                                 'prediction': test['prediction'],
