@@ -322,6 +322,42 @@ st.markdown("""
         border: 3px solid #ffffff !important;
         box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3) !important;
     }
+    
+    /* Mobile Navigation Buttons */
+    [data-testid="column"] .stButton button[key^="nav_"] {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%) !important;
+        color: white !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 8px 12px !important;
+        font-weight: 600 !important;
+        font-size: 14px !important;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3) !important;
+        transition: all 0.2s !important;
+    }
+    
+    [data-testid="column"] .stButton button[key^="nav_"]:hover {
+        background: linear-gradient(135deg, #1d4ed8 0%, #1e3a8a 100%) !important;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4) !important;
+    }
+    
+    /* Logout button special styling */
+    [data-testid="column"] .stButton button[key="nav_logout"] {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    }
+    
+    [data-testid="column"] .stButton button[key="nav_logout"]:hover {
+        background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%) !important;
+    }
+    
+    /* Responsive design for mobile */
+    @media (max-width: 768px) {
+        [data-testid="column"] .stButton button[key^="nav_"] {
+            font-size: 12px !important;
+            padding: 6px 8px !important;
+        }
+    }
 
     /* FORCE ALL BUTTONS TO BE VISIBLE AND CLICKABLE */
     .stButton button, .stButton > button, button[kind="primary"], button[kind="secondary"] {
@@ -682,9 +718,38 @@ def show_auth_page():
 # Dashboard
 def show_dashboard():
     """Show main dashboard"""
+    # Mobile-friendly navigation bar at top
+    st.markdown("### 🧭 Navigation")
+    nav_col1, nav_col2, nav_col3, nav_col4, nav_col5 = st.columns([1, 1, 1, 1, 1])
+    
+    with nav_col1:
+        if st.button("🏠 Dashboard", key="nav_dashboard", use_container_width=True):
+            st.session_state.nav_override = 'Dashboard'
+            st.rerun()
+    with nav_col2:
+        if st.button("🧠 Take Test", key="nav_take_test", use_container_width=True):
+            st.session_state.nav_override = 'Take Test'
+            st.rerun()
+    with nav_col3:
+        if st.button("📊 History", key="nav_history", use_container_width=True):
+            st.session_state.nav_override = 'Test History'
+            st.rerun()
+    with nav_col4:
+        if st.button("👤 Profile", key="nav_profile", use_container_width=True):
+            st.session_state.nav_override = 'Profile'
+            st.rerun()
+    with nav_col5:
+        if st.button("🚪 Logout", key="nav_logout", use_container_width=True):
+            st.session_state.authenticated = False
+            st.session_state.user = None
+            st.session_state.page = 'login'
+            st.rerun()
+    
+    st.markdown("---")
+    
     render_heading(f"Welcome, {st.session_state.user['name']}!", "👋")
     
-    # Sidebar navigation
+    # Sidebar navigation (still keep for desktop users)
     st.sidebar.title("Navigation")
     # Use nav_override when set by buttons elsewhere (results/history)
     options = ["Dashboard", "Take Test", "Test History", "Profile"]
