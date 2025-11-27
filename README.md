@@ -24,7 +24,7 @@ A modern, interactive personality prediction application built with **Streamlit*
 
 
 
-🚀 **[Try the App Live](https://fdmgroup3.streamlit.app/)** - Experience the full personality assessment```bash
+🚀 **[Try the App Live](https://herozeroyaaro.pythonanywhere.com/)** - Experience the full personality assessment```bash
 
 # Navigate to project root
 
