@@ -274,18 +274,6 @@ Simply visit **[fdmgroup3.streamlit.app](https://fdmgroup3.streamlit.app/)** - n
 
 - probabilities (JSON), created_at
 
-## 🎨 **Screenshots**```
-
-
-
-### **Dashboard**This setup transforms your simple HTML form into a comprehensive, production-ready personality assessment platform! 🎉
-![Dashboard Preview](https://via.placeholder.com/800x400/0066cc/ffffff?text=Interactive+Dashboard+with+User+Stats)
-
-### **Personality Test**
-![Test Interface](https://via.placeholder.com/800x400/00cc66/ffffff?text=Interactive+Slider-based+Assessment)
-
-### **Results Analysis**
-![Results Page](https://via.placeholder.com/800x400/cc6600/ffffff?text=Detailed+Results+with+AI+Insights)
 
 ## 📊 **Model Performance**
 
@@ -379,11 +367,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Plotly** - Data visualization library
 - **Psychology Research** - Personality assessment methodologies
 
-## 📞 **Support & Contact**
 
-- **Issues**: [GitHub Issues](https://github.com/tharshihecker/fdm/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/tharshihecker/fdm/discussions)
-- **Email**: [Your Contact Email]
 
 ## 🎯 **Roadmap**
 
@@ -403,3 +387,13 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 [🌟 Star this repo](https://github.com/tharshihecker/fdm) • [🚀 Try the App](https://fdmgroup3.streamlit.app/) • [📖 Documentation](streamlit-deploy/DEPLOYMENT_GUIDE.md)
 
 </div>
+
+## 👨‍💻 Author
+
+Built by [tharshihecker](https://github.com/tharshihecker)
+
+---
+
+## 📝 License
+
+MIT License
